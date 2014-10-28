@@ -1,4 +1,4 @@
-# redis client in julia (when you feeel the neeed for speeed...)
+# redis client in julia
 # wraps the stable hiredis C library
 
 module RedisClient
