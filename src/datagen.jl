@@ -7,7 +7,11 @@ using DataFrames
 using RedisClient
 using Logging
 
-function get_since_date(enddate; startdate="1970-01-01", min_days=60, min_age_years=5, n=1)
+function rep(var, n)
+    [var for i = 1:n]
+end
+
+function get_since_date(enddate; startdate="1970-01-01", min_days=100, min_age_years=5, n=1)
     st = Date(startdate) + Dates.Year(min_age_years)
     et = Date(enddate) - Dates.Day(min_days)
     dt = int(et - st)
@@ -239,7 +243,7 @@ function get_customer(person::DataFrame, state::String, enddate::String, id)
         )
 end
 
-function get_customer_profiles(n=1000, enddate="2014-10-27")
+function get_customer_profiles(n=1000, enddate="2014-10-31")
     customer_key_range = get_new_customer_key_range(n)
     mail_addresses = DataFrame()
     residential_addresses = DataFrame()
@@ -261,7 +265,7 @@ function get_customer_profiles(n=1000, enddate="2014-10-27")
     ["persons" => persons, "mail_addresses" => mail_addresses, "residential_addresses" => residential_addresses, "customers" => customers]
 end
 
-function get_customer_account_role_cd(account_type_cd::String)
+function get_customer_account_role_cd(account_type_cd)
     if account_type_cd == "CC"
         "PR"
     else
@@ -280,24 +284,24 @@ end
 function get_account_holdings(customer_sk)
     num_accounts = sample(vcat([1 for i = 1:11], [2 for i = 1:3], [3 for i = 1:6], [4 for i = 1:6], [5 for i = 1:6]))
     if num_accounts == 1
-        account_type_codes = sample(vcat(["CC" for i = 1:73], ["TXN" for i = 1:9], ["PL" for i = 1:9], ["TD" for i = 1:9]))
+        account_type_codes = [sample(vcat(["CC" for i = 1:73], ["TXN" for i = 1:9], ["PL" for i = 1:9], ["TD" for i = 1:9]))]
     elseif num_accounts == 2
-        account_type_codes = vcat("TXN", sample("TD", "TD", "PL"))
+        account_type_codes = vcat("TXN", sample(["TD", "TD", "PL"]))
     elseif num_accounts == 3
         account_type_codes = vcat(["TXN", "CC"], sample(["SV", "SV", "MT"]))
     elseif num_accounts == 4
         account_type_codes = vcat(["TXN", "CC", "MT"], sample(["SV", "MT", "CC"]))
     elseif num_accounts == 5
-        account_type_codes = vcat(["TXN", "CC", "MT", "SV"], sample(vcat(["TD"], ["MT" for i = 1:3])))
+        account_type_codes = vcat(["TXN", "CC", "MT", "SV"], sample(vcat("TD", rep("MT", 3))))
     end
     customer_account_role_codes = [get_customer_account_role_cd(account_type_codes[i]) for i in 1:num_accounts]
     customer_account_role_descs = [get_customer_account_role_desc(account_type_codes[i]) for i in 1:num_accounts]
     account_keys = get_new_account_keys(customer_sk, account_type_codes)
     customer_since_date = get_customer_since_date(customer_sk)
-    set_account_open_dates(accounts_keys, [customer_since_date for i = 1:num_accounts])
+    set_account_open_dates(account_keys, [customer_since_date for i = 1:num_accounts])
     DataFrame(
         customer_sk             = [customer_sk for i = 1:num_accounts],
-        account_sk              = accounts_keys,
+        account_sk              = account_keys,
         customer_account_role_start_dt = [customer_since_date for i = 1:num_accounts],
         customer_account_role_end_dt = [NA for i = 1:num_accounts],
         customer_account_role_cd = customer_account_role_codes,
@@ -306,7 +310,7 @@ function get_account_holdings(customer_sk)
         )
 end
 
-function get_account_type_descs(account_type_codes::Array)
+function get_account_type_descs(account_type_codes)
     account_types = [
         "MT" => "Mortgage",
         "CC" => "Credit Card",
@@ -315,18 +319,18 @@ function get_account_type_descs(account_type_codes::Array)
         "TXN" => "Transaction Account",
         "SV" => "Savings Account"
         ]
-    [get(account_types, code, "Not set") for code in account_type_codes]
+    [get!(account_types, code, "Not set") for code in account_type_codes]
 end
 
 function get_num_transactions(account_type_code::String, days::Int64)
     if account_type_code in ["CC", "TXN"]
         sample(1:5, days, replace=true)
     elseif account_type_code in ["MT", "PL"]
-        sample(vcat([0 for i = 1:(days - 1)], 1), days)
+        sample(vcat(rep(0, days - 1), 1), days)
     elseif account_type_code == "SV"
         sample([1, 0, 0], days, replace=true)
     elseif account_type_code == "TD"
-        sample(vcat(1, [0 for i = 1:50]), days, replace=true)
+        sample(vcat(1, rep(0, 50)), days, replace=true)
     end
 end
 
@@ -336,9 +340,9 @@ function get_sign(account_type_code::String)
     elseif account_type_code == "TD"
         sample(["CR", "CR", "DR"])
     elseif account_type_code in ["CC", "TXN"]
-        sample(vcat("CR", ["DR for i = 1:28"]))
+        sample(vcat("CR", rep("DR", 28)))
     elseif account_type_code == "SV"
-        sample(vcat(["CR" for i = 1:20], "DR"))
+        sample(vcat(rep("CR", 20), "DR"))
     end
 end
 
@@ -380,13 +384,13 @@ function get_opening_balance(account_type_code::String)
     end
 end
 
-function get_account_details(customer_sk::String, enddate::String)
+function get_account_details(customer_sk, enddate::String)
     core_customer_details = get_customer_accounts(customer_sk)
     DataFrame(
         account_sk              = core_customer_details[:account_key],
         account_id              = core_customer_details[:account_key],
         account_type_cd         = core_customer_details[:account_type],
-        account_type_desc       = get_account_type_desc(core_customer_details["account_type"]),
+        account_type_desc       = get_account_type_descs(core_customer_details[:account_type]),
         account_open_dt         = core_customer_details[:open_date],
         account_close_dt        = NA,
         account_status_cd       = "A",
@@ -397,13 +401,13 @@ end
 function get_account_balance(account_sk, enddate, days)
     dt = Date(enddate) - Dates.Day(days)
     account_type_code = get_account_type(account_sk)
-    opening_balance = get_opening_balance(accoount_type_code)
+    opening_balance = get_opening_balance(account_type_code)
     DataFrame(
-        account_sk              = [account_sk for i = 1:days],
-        account_balance_type_cd = [NA for i = 1:days],
-        account_balance_type_desc = [NA for i = 1:days],
+        account_sk              = rep(account_sk, days),
+        account_balance_type_cd = rep(NA, days),
+        account_balance_type_desc = rep(NA, days),
         account_balance_dt      = [dt + Dates.Day(i) for i = 0:(days - 1)],
-        account_balance_val     = vcat(opening_balance, [0 for i = 1:(days = 1)])
+        account_balance_val     = vcat(opening_balance, rep(0, days - 1))
         )
 end
 
@@ -422,7 +426,7 @@ function get_transactions(account_sk, enddate, days)
                 sign = get_sign(account_type_code)
                 amount = get_amount(account_type_code, sign)
                 push!(times, ts)
-                push!{amounts, amount}
+                push!(amounts, amount)
             end
         end
     end
@@ -431,27 +435,27 @@ function get_transactions(account_sk, enddate, days)
             transaction_sk                = get_new_transaction_key_range(num_transactions),
             transaction_ts                = times,
             transaction_amount            = amounts,
-            transaction_channel_type_cd   = [NA for i = 1:num_transactions],
-            transaction_channel_type_desc = [NA for i = 1:num_transactions],
-            transaction_dr_cr             = [NA for i = 1:num_transactions],
-            transaction_ref_num           = [NA for i = 1:num_transactions],
-            transaction_status_cd         = [NA for i = 1:num_transactions],
-            transaction_status_desc       = [NA for i = 1:num_transactions],
-            merchant_id                   = [NA for i = 1:num_transactions],
-            account_sk                    = [account_sk for i = 1:num_transactions]
+            transaction_channel_type_cd   = rep(NA, num_transactions),
+            transaction_channel_type_desc = rep(NA, num_transactions),
+            transaction_dr_cr             = rep(NA, num_transactions),
+            transaction_ref_num           = rep(NA, num_transactions),
+            transaction_status_cd         = rep(NA, num_transactions),
+            transaction_status_desc       = rep(NA, num_transactions),
+            merchant_id                   = rep(NA, num_transactions),
+            account_sk                    = rep(account_sk, num_transactions)
             )
     else
         nothing
     end
 end
 
-function get_channel_type_cd(ib_yn, gomoney_yn, int_num)
+function get_channel_type_cd(ib_yn, gomoney_yn, num_interactions)
     if ib_yn == "Y" && gomoney_yn == "Y"
-        sample(["GM", "IB"], int_num, replace=true)
+        sample(["GM", "IB"], num_interactions, replace=true)
     elseif ib_yn == "Y" && gomoney_yn == "N"
-        ["IB" for i = 1:int_num]
+        ["IB" for i = 1:num_interactions]
     elseif ib_yn == "N" && gomoney_yn == "Y"
-        ["GM" for i = 1:int_num]
+        ["GM" for i = 1:num_interactions]
     end
 end
 
@@ -465,12 +469,12 @@ end
 
 function get_interactions(ib_yn, gomoney_yn, num_interactions)
     interactions_per_day = get_num_interactions(days)
-    num_interactions = sum(interactions_per_day)
-    channel_type_cd = get_channel_type_cd(ib_yn, gomoney_yn, num_interactions)
+    total_num_interactions = sum(interactions_per_day)
+    channel_type_cd = get_channel_type_cd(ib_yn, gomoney_yn, total_num_interactions)
     channel_type_desc = get_channel_type_desc(channel_type_cd)
     start_times = []
     end_times = []
-    start_ts = DateTime(enddate) - Dates.Day(31)
+    start_ts = DateTime(enddate) - Dates.Day(days + 1)
     for i in 1:days
         start_ts = start_ts + Dates.Day(1)
         if interactions_per_day > 0
@@ -480,23 +484,28 @@ function get_interactions(ib_yn, gomoney_yn, num_interactions)
         end
     end
     DataFrame(
-        interaction_sk          = get_new_interaction_key_range(num_interactions),
+        interaction_sk          = get_new_interaction_key_range(total_num_interactions, customer_key),
         interaction_start_ts    = start_times,
         interaction_end_ts      = end_times,
         interaction_channel_type_cd = channel_type_cd,
         interaction_channel_type_desc = channel_type_desc,
-        interaction_direction   = [NA for i = 1:num_interactions],
-        interaction_ref_num     = [NA for i = 1:num_interactions]
+        interaction_direction   = rep(NA, total_num_interactions),
+        interaction_ref_num     = rep(NA, total_num_interactions)
         )
 end
 
-function get_channel_usage(customer_sk, customer_since_dt, enddate)
+function get_channel_usage(customer_sk, enddate, days)
+    dt = Date(enddate) - Dates.Day(days)
+    customer_since_dt = get_customer_since_date(customer_sk)
+    since_dt = Date(customer_since_dt)
     gomoney_estb_dt = Date("2005-01-01")
-    ib_estb_dt = date("1995-01-01")
+    ib_estb_dt = Date("1995-01-01")
     ib_yn = sample(vcat(["Y" for i = 1:8], ["N", "N"]))
+    set_customer_attribute(customer_sk, "ib_yn", ib_yn)
     gomoney_yn = sample(vcat(["Y" for i = 1:7], ["N" for i = 1:3]))
-    earliest_gm_start_dt = customer_since_dt > gomoney_estb_dt ? customer_since_dt : gomoney_estb_dt
-    earliest_ib_start_dt = customer_since_dt > ib_estb_dt ? customer_since_dt : ib_estb_dt
+    set_customer_attribute(customer_sk, "gomoney_yn", gomoney_yn)
+    earliest_gm_start_dt = since_dt > gomoney_estb_dt ? customer_since_dt : gomoney_estb_dt
+    earliest_ib_start_dt = since_dt > ib_estb_dt ? customer_since_dt : ib_estb_dt
     if gomoney_yn == "Y"
         gomoney_registered_dt = get_since_date(enddate, startdate=earliest_gm_start_dt, min_days=60, min_age_years=0)
     else
@@ -508,27 +517,29 @@ function get_channel_usage(customer_sk, customer_since_dt, enddate)
         ib_registered_dt = NA
     end
     DataFrame(
-        gomoney_yn              = gomoney_yn,
-        gomoney_registered_dt   = gomoney_registered_dt,
-        num_gomoney_logins_last_7_days = 0,
-        num_gomoney_logins_last_30_days = 0,
-        ib_yn                   = ib_yn,
-        ib_registered_dt        = ib_registered_dt,
-        num_ib_logins_last_7_days = 0,
-        num_ib_logins_last_30_days = 0,
-        customer_sk             = customer_sk
+        customer_sk             = rep(customer_sk, days),
+        channel_usage_dt        = [dt + Dates.Day(i) for i = 0:(days - 1)],
+        gomoney_yn              = rep(gomoney_yn, days),
+        gomoney_registered_dt   = rep(gomoney_registered_dt, days),
+        num_gomoney_logins_last_7_days = rep(0, days),
+        num_gomoney_logins_last_30_days = rep(0, days),
+        ib_yn                   = rep(ib_yn, days),
+        ib_registered_dt        = rep(ib_registered_dt, days),
+        num_ib_logins_last_7_days = rep(0, days),
+        num_ib_logins_last_30_days = rep(0, days)
         )
 end
 
-function write_data(n, host="127.0.0.1", port=6379)
+function write_data(n, enddate="2014-10-31", host="127.0.0.1", port=6379)
     start_session(host, port)
-    profiles = get_customer_profiles(n)
+    profiles = get_customer_profiles(n, enddate)
     writetable("data/persons.csv", profiles["persons"])
     writetable("data/mail_addresses.csv", profiles["mail_addresses"])
     writetable("data/residential_addresses.csv", profiles["residential_addresses"])
     writetable("data/customers.csv", profiles["customers"])
 end
 
-export get_customer_profiles, write_data
+export get_customer_profiles, write_data, get_account_holdings, get_account_details, get_account_balance,
+    get_transactions, get_channel_usage, get_interactions, get_customer_interaction_keys
 
 end

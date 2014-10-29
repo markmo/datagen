@@ -74,6 +74,7 @@ function get_new_account_key_range(n::Int64)
     if n == 1
         return key_range_start
     end
+    key_range_end = key_range_start
     for i in 1:(n - 1)
         key_range_end = get_new_account_key()
     end
@@ -88,22 +89,26 @@ function get_new_transaction_key_range(n::Int64)
     if n == 1
         return key_range_start
     end
+    key_range_end = key_range_start
     for i in 1:(n - 1)
         key_range_end = get_new_transaction_key()
     end
     key_range_start:key_range_end
 end
 
-function get_new_interaction_key_range(n::Int64)
+function get_new_interaction_key_range(n::Int64, customer_key)
     if n < 1
         error("n must be a positive integer value")
     end
     key_range_start = get_new_interaction_key()
+    sadd(string("interaction_keyset:", customer_key), key_range_start)
     if n == 1
         return key_range_start
     end
+    key_range_end = key_range_start
     for i in 1:(n - 1)
         key_range_end = get_new_interaction_key()
+        sadd(string("interaction_keyset:", customer_key), key_range_end)
     end
     key_range_start:key_range_end
 end
@@ -154,7 +159,7 @@ function get_account_open_date(account_key)
     get_account_attribute(account_key, "open_date")
 end
 
-function set_account_open_dates(account_keys::Array, open_dates::Array)
+function set_account_open_dates(account_keys, open_dates::Array)
     for i in 1:length(account_keys)
         set_account_open_date(account_keys[i], open_dates[i])
     end
@@ -162,6 +167,10 @@ end
 
 function get_customer_account_keys(customer_key)
     smembers(string("account_keyset:", customer_key))
+end
+
+function get_customer_interaction_keys(customer_key)
+    smembers(string("interaction_keyset:", customer_key))
 end
 
 function get_account_open_dates(customer_key)
@@ -199,6 +208,6 @@ export initialize_key_manager, get_new_customer_key, get_new_account_key, get_ne
     get_customer_key_range, get_new_account_keys, set_account_attribute, set_account_attributes,
     get_account_attribute, get_account_attribute_selection, get_account_attributes,
     set_account_open_date, get_account_open_date, set_account_open_dates, get_customer_account_keys,
-    get_account_open_dates, get_account_type, get_customer_accounts
+    get_account_open_dates, get_account_type, get_customer_accounts, get_customer_interaction_keys
 
 end
