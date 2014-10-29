@@ -3,7 +3,9 @@
 
 module RedisClient
 
-export start_session, set, get, incr, hset, hget, hmset, hmget, hgetall, sadd, smembers
+using Logging
+
+Logging.configure(level=DEBUG)
 
 const REDIS_REPLY_STRING = 1
 const REDIS_REPLY_ARRAY = 2
@@ -11,6 +13,8 @@ const REDIS_REPLY_INTEGER = 3
 const REDIS_REPLY_NIL = 4
 const REDIS_REPLY_STATUS = 5
 const REDIS_REPLY_ERROR = 6
+
+redisContext = 0
 
 type RedisReply
   rtype::Int32                  # REDIS_REPLY_*
@@ -21,13 +25,15 @@ type RedisReply
   element::Ptr{Ptr{RedisReply}} # elements vector for REDIS_REPLY_ARRAY
 end
 
-redisContext = 0
-
-function start_session(host::String, port::Int64)
+function start_session(host::String = "127.0.0.1", port::Int64 = 6379)
     global redisContext = ccall((:redisConnect, "libhiredis"), Ptr{Uint8}, (Ptr{Uint8}, Int32), host, port)
 end
 
 function do_command(command::String)
+    if redisContext == 0
+        error("redisContext not defined. Please call RedisClient.start_session.")
+    end
+#     debug(string("RedisClient.do_command: ", command))
     redisReply = ccall((:redisCommand, "libhiredis"), Ptr{RedisReply}, (Ptr{Uint8}, Ptr{Uint8}), redisContext, command)
     r = unsafe_load(redisReply)
     if r.rtype == REDIS_REPLY_ERROR
@@ -138,6 +144,10 @@ end
 
 function smembers(key::String)
     do_command(string("SMEMBERS ", key))
+end
+
+export start_session, set, get, incr, hset, hget, hmset, hmget, hgetall, sadd, smembers
+
 end
 
 # start_session("127.0.0.1", 6379)
