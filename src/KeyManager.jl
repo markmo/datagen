@@ -114,7 +114,7 @@ function get_new_interaction_key_range(n::Int64, customer_key)
 end
 
 function get_customer_key_range()
-    1:get("last_customer_key")
+    1:kvget("last_customer_key")
 end
 
 function get_new_account_keys(customer_key, account_types::Array)
