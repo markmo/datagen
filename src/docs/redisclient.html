@@ -1,0 +1,882 @@
+<!doctype html>
+
+<meta charset="utf-8">
+
+<title>RedisClient</title>
+
+<link rel="stylesheet" type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/4.5.0/codemirror.min.css">
+
+<link rel="stylesheet" type="text/css" href="static/custom.css">
+
+<h1 class='package-header'>RedisClient</h1>
+
+<h1 id='module-reference'>Reference</h1>
+<ul class='index'>
+<li >
+<strong>methods:</strong>
+</li>
+<li >
+<ul >
+<li >
+<a href='#call_get_reply(redisReply::Array{Ptr{RedisReply},N})'>call_get_reply(redisReply::Array{Ptr{RedisReply},N})</a></li>
+<li >
+<a href='#del(key::String)'>del(key::String)</a></li>
+<li >
+<a href='#do_command(argv::Array{T,N})'>do_command(argv::Array{T,N})</a></li>
+<li >
+<a href='#do_command(command::String)'>do_command(command::String)</a></li>
+<li >
+<a href='#docommand(cmd,pipeline)'>docommand(cmd,pipeline)</a></li>
+<li >
+<a href='#dump(key::String)'>dump(key::String)</a></li>
+<li >
+<a href='#exists(key::String)'>exists(key::String)</a></li>
+<li >
+<a href='#flushall()'>flushall()</a></li>
+<li >
+<a href='#flushdb()'>flushdb()</a></li>
+<li >
+<a href='#free_reply_object(redisReply)'>free_reply_object(redisReply)</a></li>
+<li >
+<a href='#get_reply()'>get_reply()</a></li>
+<li >
+<a href='#get_result(redisReply::Ptr{RedisReply})'>get_result(redisReply::Ptr{RedisReply})</a></li>
+<li >
+<a href='#hdel(key::String,argv...)'>hdel(key::String,argv...)</a></li>
+<li >
+<a href='#hdel(key::String,fields::Array{T,N})'>hdel(key::String,fields::Array{T,N})</a></li>
+<li >
+<a href='#hexists(key::String,field::String)'>hexists(key::String,field::String)</a></li>
+<li >
+<a href='#hget(key::String,attr_name::String)'>hget(key::String,attr_name::String)</a></li>
+<li >
+<a href='#hgetall(key::String)'>hgetall(key::String)</a></li>
+<li >
+<a href='#hincrby(key::String,field::String,increment::Float64)'>hincrby(key::String,field::String,increment::Float64)</a></li>
+<li >
+<a href='#hincrby(key::String,field::String,increment::Int64)'>hincrby(key::String,field::String,increment::Int64)</a></li>
+<li >
+<a href='#hkeys(key::String)'>hkeys(key::String)</a></li>
+<li >
+<a href='#hlen(key::String)'>hlen(key::String)</a></li>
+<li >
+<a href='#hmget(key::String,argv...)'>hmget(key::String,argv...)</a></li>
+<li >
+<a href='#hmget(key::String,fields::Array{T,N})'>hmget(key::String,fields::Array{T,N})</a></li>
+<li >
+<a href='#hmset(key::String,argv...)'>hmset(key::String,argv...)</a></li>
+<li >
+<a href='#hmset(key::String,attrs::Array{T,N})'>hmset(key::String,attrs::Array{T,N})</a></li>
+<li >
+<a href='#hmset(key::String,attrs::Dict{K,V})'>hmset(key::String,attrs::Dict{K,V})</a></li>
+<li >
+<a href='#hset(key::String,attr_name::String,attr_value)'>hset(key::String,attr_name::String,attr_value)</a></li>
+<li >
+<a href='#hvals(key::String)'>hvals(key::String)</a></li>
+<li >
+<a href='#incr(key::String)'>incr(key::String)</a></li>
+<li >
+<a href='#keys(pattern::String)'>keys(pattern::String)</a></li>
+<li >
+<a href='#kvget(key::String)'>kvget(key::String)</a></li>
+<li >
+<a href='#kvset(key::String,value::String)'>kvset(key::String,value::String)</a></li>
+<li >
+<a href='#pipeline_command(command::String)'>pipeline_command(command::String)</a></li>
+<li >
+<a href='#rtype(key::String)'>rtype(key::String)</a></li>
+<li >
+<a href='#sadd(key::String,member)'>sadd(key::String,member)</a></li>
+<li >
+<a href='#scard(key::String)'>scard(key::String)</a></li>
+<li >
+<a href='#sdiff(key::String,argv...)'>sdiff(key::String,argv...)</a></li>
+<li >
+<a href='#sdiff(keys::Array{T,N})'>sdiff(keys::Array{T,N})</a></li>
+<li >
+<a href='#selectdb(db)'>selectdb(db)</a></li>
+<li >
+<a href='#sinter(key::String,argv...)'>sinter(key::String,argv...)</a></li>
+<li >
+<a href='#sinter(keys::Array{T,N})'>sinter(keys::Array{T,N})</a></li>
+<li >
+<a href='#sismember(key::String,member)'>sismember(key::String,member)</a></li>
+<li >
+<a href='#smembers(key::String)'>smembers(key::String)</a></li>
+<li >
+<a href='#srem(key::String,argv...)'>srem(key::String,argv...)</a></li>
+<li >
+<a href='#srem(key::String,members::Array{T,N})'>srem(key::String,members::Array{T,N})</a></li>
+<li >
+<a href='#sunion(key::String,argv...)'>sunion(key::String,argv...)</a></li>
+<li >
+<a href='#sunion(keys::Array{T,N})'>sunion(keys::Array{T,N})</a></li>
+</ul>
+</li>
+</ul>
+<div class='entries'>
+<div class='entry'>
+<div id='call_get_reply(redisReply::Array{Ptr{RedisReply},N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> call_get_reply(redisReply::Array{Ptr{RedisReply},N})
+</div>
+<div class='entry-body'>
+<p>In a blocking context, this function first checks if there are unconsumed replies to return and returns one if so. Otherwise, it flushes the output buffer to the socket and reads until it has a reply. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:146</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='del(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> del(key::String)
+</div>
+<div class='entry-body'>
+<p>Delete a key.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:273</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='do_command(argv::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> do_command(argv::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Issues a blocking command to hiredis, accepting command arguments as an Array.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:220</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='do_command(command::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> do_command(command::String)
+</div>
+<div class='entry-body'>
+<p>Issues a blocking command to hiredis.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:209</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='docommand(cmd,pipeline)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> docommand(cmd,pipeline)
+</div>
+<div class='entry-body'>
+<p>Switches between blocking and pipelined command execution according to flag.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:229</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='dump(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> dump(key::String)
+</div>
+<div class='entry-body'>
+<p>Return a serialized version of the value stored at the specified key.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:288</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='exists(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> exists(key::String)
+</div>
+<div class='entry-body'>
+<p>Determine if a key exists.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:278</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='flushall()' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> flushall()
+</div>
+<div class='entry-body'>
+<p>Remove all keys from all databases.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:545</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='flushdb()' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> flushdb()
+</div>
+<div class='entry-body'>
+<p>Remove all keys from the current database.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:540</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='free_reply_object(redisReply)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> free_reply_object(redisReply)
+</div>
+<div class='entry-body'>
+<p>Free memory allocated to objects returned from hiredis</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:124</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='get_reply()' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> get_reply()
+</div>
+<div class='entry-body'>
+<p>Calls call_get_reply until the pipelinedCommandCount is 0 or an error is returned. Adds the results from each reply to an Array, then returns the Array. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:155</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='get_result(redisReply::Ptr{RedisReply})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> get_result(redisReply::Ptr{RedisReply})
+</div>
+<div class='entry-body'>
+<p>Converts the reply object from hiredis into a String, int, or Array as appropriate the the reply type. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:169</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hdel(key::String,argv...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hdel(key::String,argv...)
+</div>
+<div class='entry-body'>
+<p>Delete one or more hash fields. Multiple fields are provided as additional arguments. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:386</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hdel(key::String,fields::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hdel(key::String,fields::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Delete one or more hash fields. Multiple fields are provided as an Array. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:398</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hexists(key::String,field::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hexists(key::String,field::String)
+</div>
+<div class='entry-body'>
+<p>Determine if a hash field exists.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:407</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hget(key::String,attr_name::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hget(key::String,attr_name::String)
+</div>
+<div class='entry-body'>
+<p>Get the value of a hash field.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:304</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hgetall(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hgetall(key::String)
+</div>
+<div class='entry-body'>
+<p>Get all the fields and values in a hash.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:370</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hincrby(key::String,field::String,increment::Float64)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hincrby(key::String,field::String,increment::Float64)
+</div>
+<div class='entry-body'>
+<p>Increment the float value of a hash field by the given number.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:432</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hincrby(key::String,field::String,increment::Int64)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hincrby(key::String,field::String,increment::Int64)
+</div>
+<div class='entry-body'>
+<p>Increment the integer value of a hash field by the given number.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:427</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hkeys(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hkeys(key::String)
+</div>
+<div class='entry-body'>
+<p>Get all the fields in a hash.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:412</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hlen(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hlen(key::String)
+</div>
+<div class='entry-body'>
+<p>Get the number of fields in a hash.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:422</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hmget(key::String,argv...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmget(key::String,argv...)
+</div>
+<div class='entry-body'>
+<p>Get the values of all the given hash fields. Multiple fields are provided as additional arguments. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:349</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hmget(key::String,fields::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmget(key::String,fields::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Get the values of all the given hash fields. Multiple fields are provided as an Array. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:361</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hmset(key::String,argv...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmset(key::String,argv...)
+</div>
+<div class='entry-body'>
+<p>Set multiple hash fields to multiple values. A variable number of arguments follow key in <code>field</code> <code>value</code> format, e.g.:     <code>hmset("myhash", "field1", "Hello", "field2", "World")</code> </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:313</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hmset(key::String,attrs::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmset(key::String,attrs::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Set multiple hash fields to multiple values. Fields and values are provided as an Array. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:325</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hmset(key::String,attrs::Dict{K,V})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmset(key::String,attrs::Dict{K,V})
+</div>
+<div class='entry-body'>
+<p>Set multiple hash fields to multiple values. Fields and values are provided as a Dict. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:337</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hset(key::String,attr_name::String,attr_value)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hset(key::String,attr_name::String,attr_value)
+</div>
+<div class='entry-body'>
+<p>Set the string value of a hash field.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:298</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hvals(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hvals(key::String)
+</div>
+<div class='entry-body'>
+<p>Get all the values in a hash.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:417</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='incr(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> incr(key::String)
+</div>
+<div class='entry-body'>
+<p>Increment the integer value of a key by one.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:268</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='keys(pattern::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> keys(pattern::String)
+</div>
+<div class='entry-body'>
+<p>Find all keys matching the given pattern.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:283</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='kvget(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> kvget(key::String)
+</div>
+<div class='entry-body'>
+<p>Get the value of a key.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:263</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='kvset(key::String,value::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> kvset(key::String,value::String)
+</div>
+<div class='entry-body'>
+<p>Set the string value of a key.</p>
+<p>Params:</p>
+<ul><li>key - The key to set</li><li>value - The value to set</li><li>ex - Set the specified expire time, in seconds</li><li>px - Set the specified expire time, in milliseconds</li><li>pipeline - A flag to indicate that the command should be pipelined</li></ul><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:252</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='pipeline_command(command::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> pipeline_command(command::String)
+</div>
+<div class='entry-body'>
+<p>Appends commands to an output buffer. Pipelining is sending a batch of commands to redis to be processed in bulk. It cuts down the number of network requests. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:132</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='rtype(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> rtype(key::String)
+</div>
+<div class='entry-body'>
+<p>Determine the type stored at key.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:293</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sadd(key::String,member)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sadd(key::String,member)
+</div>
+<div class='entry-body'>
+<p>Add a member to a set.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:437</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='scard(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> scard(key::String)
+</div>
+<div class='entry-body'>
+<p>Get the number of members in a set.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:452</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sdiff(key::String,argv...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sdiff(key::String,argv...)
+</div>
+<div class='entry-body'>
+<p>Subtract multiple sets. Multiple sets are provided as additional arguments.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:481</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sdiff(keys::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sdiff(keys::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Subtract multiple sets. Multiple sets are provided as an Array.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:490</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='selectdb(db)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> selectdb(db)
+</div>
+<div class='entry-body'>
+<p>Change the selected database for the current connection.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:535</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sinter(key::String,argv...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sinter(key::String,argv...)
+</div>
+<div class='entry-body'>
+<p>Intersect multiple sets. Multiple sets are provided as additional arguments.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:499</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sinter(keys::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sinter(keys::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Intersect multiple sets. Multiple sets are provided as an Array.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:508</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sismember(key::String,member)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sismember(key::String,member)
+</div>
+<div class='entry-body'>
+<p>Determine if a given value is a member of a set.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:447</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='smembers(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> smembers(key::String)
+</div>
+<div class='entry-body'>
+<p>Get all the members in a set.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:442</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='srem(key::String,argv...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> srem(key::String,argv...)
+</div>
+<div class='entry-body'>
+<p>Remove one or more members from a set. Members are provided as additional arguments. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:460</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='srem(key::String,members::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> srem(key::String,members::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Remove one or more members from a set. Members are provided as an Array. </p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:472</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sunion(key::String,argv...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sunion(key::String,argv...)
+</div>
+<div class='entry-body'>
+<p>Add multiple sets. Multiple sets are provided as additional arguments.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:517</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='sunion(keys::Array{T,N})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sunion(keys::Array{T,N})
+</div>
+<div class='entry-body'>
+<p>Add multiple sets. Multiple sets are provided as an Array.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:526</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/4.5.0/codemirror.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/4.5.0/mode/julia/julia.min.js"></script>
+
+
+
+<script type="text/javascript" src="static/custom.js"></script>
+
