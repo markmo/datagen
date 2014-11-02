@@ -191,19 +191,18 @@ function get_result(redisReply::Ptr{RedisReply})
     ret
 end
 
+@doc "Pipelines a block of ordinary blocking calls." ->
 macro pipeline(expr)
-    args = ex.args |> filter(x -> typeof(x) == Expr) |> map(x ->
+    Expr(:block, map(x ->
         begin
-            fn = x.args[1]
-            if fn in names(RedisClient)
-                args = x.args[2:end]
-                push!(args, "pipeline=true")
-                Expr(fn, args)
+            if x.args[1] in names(RedisClient)
+                args = copy(x.args)
+                push!(args, Expr(:kw, :pipeline, true))
+                Expr(x.head, args...)
             else
                 x
             end
-        end)
-    eval(Expr(:block, args))
+        end, filter(x -> typeof(x) == Expr, expr.args))...)
 end
 
 @doc "Issues a blocking command to hiredis." ->
@@ -547,20 +546,12 @@ function flushall()
     do_command("FLUSHALL")
 end
 
-export
-    # session
-    start_session, end_session,
-    # key-value
-    kvset, kvget, incr, del, exists, keys, dump, rtype,
-    # hash sets
-    hset, hget, hmset, hmget, hgetall, hdel, hexists, hkeys, hvals, hlen, hincrby,
-    # sets
-    sadd, smembers, sismember, scard, srem, sdiff, sinter, sunion
-    # management
-    selectdb, flushdb, flushall,
-    # pipelining
-    get_reply,
-    # generic
-    do_command, pipeline_command
+export start_session, end_session,                                                  # session
+    kvset, kvget, incr, del, exists, keys, dump, rtype,                             # key-value
+    hset, hget, hmset, hmget, hgetall, hdel, hexists, hkeys, hvals, hlen, hincrby,  # hash sets
+    sadd, smembers, sismember, scard, srem, sdiff, sinter, sunion,                  # sets
+    selectdb, flushdb, flushall,                                                    # management
+    @pipeline, get_reply,                                                           # pipelining
+    do_command, pipeline_command                                                    # generic
 
 end

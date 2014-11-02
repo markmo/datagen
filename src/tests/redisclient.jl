@@ -49,6 +49,16 @@ smembers("pipeline_test:1", pipeline=true)
 replies = get_reply()
 @test length(replies[5]) == 3
 
+info("test pipelining using the @pipeline macro")
+@pipeline begin
+    incr("maz")
+    incr("maz")
+    incr("maz")
+    kvget("maz")
+end
+replies = get_reply()
+@test int(replies[4]) == 3
+
 info("flushdb, select db 1")
 flushdb()
 selectdb(1)
