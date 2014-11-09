@@ -1,9 +1,12 @@
+srcdir = dirname(@__FILE__)
+require(string(srcdir, "/DataGen.jl"))
+
 using DataGen
 using DataFrames
-using RedisClient
+using Hiredis
 using KeyManager
 
-num_customers = 1000
+num_customers = 10
 enddate = "2014-10-31"
 balance_days = 30
 transaction_days = 60
@@ -12,8 +15,7 @@ redis_port = 6379
 
 start_session(redis_host, redis_port)
 
-profiles = get_customer_profiles(num_customers, enddate)
-persons = profiles["persons"]
+persons, mail_addresses, residential_addresses, customers = get_customer_profiles(num_customers, enddate)
 customer_keys = persons[:customer_sk]
 
 customer_accounts = DataFrame()
@@ -26,7 +28,7 @@ interaction_customer_keys = []
 for customer_key in customer_keys
     account_holding = get_account_holdings(customer_key)
     customer_accounts = rbind(customer_accounts, account_holding)
-    account = get_account_details(customer_key, enddate)
+    account = get_account_details(customer_key)
     accounts = rbind(accounts, account)
 
     usage = get_channel_usage(customer_key, enddate, balance_days)
@@ -65,13 +67,13 @@ for account_key in account_keys
     end
 end
 
-writetable("data/persons.csv", profiles["persons"])
-writetable("data/mail_addresses.csv", profiles["mail_addresses"])
-writetable("data/residential_addresses.csv", profiles["residential_addresses"])
-writetable("data/customers.csv", profiles["customers"])
-writetable("data/account_balances.csv", account_balances)
-writetable("data/account_transactions.csv", account_transactions)
-writetable("data/channel_usage.csv", channel_usage)
-writetable("data/customer_accounts.csv", customer_accounts)
-writetable("data/accounts.csv", accounts)
-writetable("data/interactions.csv", interactions)
+writetable(string(srcdir, "/../data/persons.csv"), persons)
+writetable(string(srcdir, "/../data/mail_addresses.csv"), mail_addresses)
+writetable(string(srcdir, "/../data/residential_addresses.csv"), residential_addresses)
+writetable(string(srcdir, "/../data/customers.csv"), customers)
+writetable(string(srcdir, "/../data/account_balances.csv"), account_balances)
+writetable(string(srcdir, "/../data/account_transactions.csv"), account_transactions)
+writetable(string(srcdir, "/../data/channel_usage.csv"), channel_usage)
+writetable(string(srcdir, "/../data/customer_accounts.csv"), customer_accounts)
+writetable(string(srcdir, "/../data/accounts.csv"), accounts)
+writetable(string(srcdir, "/../data/interactions.csv"), interactions)

@@ -2,14 +2,14 @@
 
 <meta charset="utf-8">
 
-<title>RedisClient</title>
+<title>Hiredis</title>
 
 <link rel="stylesheet" type="text/css"
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/4.5.0/codemirror.min.css">
 
 <link rel="stylesheet" type="text/css" href="static/custom.css">
 
-<h1 class='package-header'>RedisClient</h1>
+<h1 class='package-header'>Hiredis</h1>
 
 <h1 id='module-reference'>Reference</h1>
 <ul class='index'>
@@ -19,7 +19,7 @@
 <li >
 <ul >
 <li >
-<a href='#call_get_reply(redisReply::Array{Ptr{RedisReply},N})'>call_get_reply(redisReply::Array{Ptr{RedisReply},N})</a></li>
+<a href='#call_get_reply(redisReply::Array{Ptr{RedisReply},1})'>call_get_reply(redisReply::Array{Ptr{RedisReply},1})</a></li>
 <li >
 <a href='#del(key::String)'>del(key::String)</a></li>
 <li >
@@ -27,9 +27,7 @@
 <li >
 <a href='#do_command(command::String)'>do_command(command::String)</a></li>
 <li >
-<a href='#docommand(cmd,pipeline)'>docommand(cmd,pipeline)</a></li>
-<li >
-<a href='#dump(key::String)'>dump(key::String)</a></li>
+<a href='#docommand(cmd::String,pipeline::Bool)'>docommand(cmd::String,pipeline::Bool)</a></li>
 <li >
 <a href='#exists(key::String)'>exists(key::String)</a></li>
 <li >
@@ -43,9 +41,11 @@
 <li >
 <a href='#get_result(redisReply::Ptr{RedisReply})'>get_result(redisReply::Ptr{RedisReply})</a></li>
 <li >
-<a href='#hdel(key::String,argv...)'>hdel(key::String,argv...)</a></li>
+<a href='#getkeys(pattern::String)'>getkeys(pattern::String)</a></li>
 <li >
-<a href='#hdel(key::String,fields::Array{T,N})'>hdel(key::String,fields::Array{T,N})</a></li>
+<a href='#hdel(key::String,argv::String...)'>hdel(key::String,argv::String...)</a></li>
+<li >
+<a href='#hdel(key::String,fields::Array{String,1})'>hdel(key::String,fields::Array{String,1})</a></li>
 <li >
 <a href='#hexists(key::String,field::String)'>hexists(key::String,field::String)</a></li>
 <li >
@@ -61,15 +61,15 @@
 <li >
 <a href='#hlen(key::String)'>hlen(key::String)</a></li>
 <li >
-<a href='#hmget(key::String,argv...)'>hmget(key::String,argv...)</a></li>
+<a href='#hmget(key::String,argv::String...)'>hmget(key::String,argv::String...)</a></li>
 <li >
-<a href='#hmget(key::String,fields::Array{T,N})'>hmget(key::String,fields::Array{T,N})</a></li>
+<a href='#hmget(key::String,fields::Array{String,1})'>hmget(key::String,fields::Array{String,1})</a></li>
 <li >
 <a href='#hmset(key::String,argv...)'>hmset(key::String,argv...)</a></li>
 <li >
-<a href='#hmset(key::String,attrs::Array{T,N})'>hmset(key::String,attrs::Array{T,N})</a></li>
+<a href='#hmset(key::String,attrs::Array{Any,1})'>hmset(key::String,attrs::Array{Any,1})</a></li>
 <li >
-<a href='#hmset(key::String,attrs::Dict{K,V})'>hmset(key::String,attrs::Dict{K,V})</a></li>
+<a href='#hmset(key::String,attrs::Dict{String,Any})'>hmset(key::String,attrs::Dict{String,Any})</a></li>
 <li >
 <a href='#hset(key::String,attr_name::String,attr_value)'>hset(key::String,attr_name::String,attr_value)</a></li>
 <li >
@@ -77,13 +77,13 @@
 <li >
 <a href='#incr(key::String)'>incr(key::String)</a></li>
 <li >
-<a href='#keys(pattern::String)'>keys(pattern::String)</a></li>
-<li >
 <a href='#kvget(key::String)'>kvget(key::String)</a></li>
 <li >
 <a href='#kvset(key::String,value::String)'>kvset(key::String,value::String)</a></li>
 <li >
 <a href='#pipeline_command(command::String)'>pipeline_command(command::String)</a></li>
+<li >
+<a href='#rdump(key::String)'>rdump(key::String)</a></li>
 <li >
 <a href='#rtype(key::String)'>rtype(key::String)</a></li>
 <li >
@@ -91,15 +91,15 @@
 <li >
 <a href='#scard(key::String)'>scard(key::String)</a></li>
 <li >
-<a href='#sdiff(key::String,argv...)'>sdiff(key::String,argv...)</a></li>
+<a href='#sdiff(key::String,argv::String...)'>sdiff(key::String,argv::String...)</a></li>
 <li >
-<a href='#sdiff(keys::Array{T,N})'>sdiff(keys::Array{T,N})</a></li>
+<a href='#sdiff(keys::Array{String,1})'>sdiff(keys::Array{String,1})</a></li>
 <li >
 <a href='#selectdb(db)'>selectdb(db)</a></li>
 <li >
-<a href='#sinter(key::String,argv...)'>sinter(key::String,argv...)</a></li>
+<a href='#sinter(key::String,argv::String...)'>sinter(key::String,argv::String...)</a></li>
 <li >
-<a href='#sinter(keys::Array{T,N})'>sinter(keys::Array{T,N})</a></li>
+<a href='#sinter(keys::Array{String,1})'>sinter(keys::Array{String,1})</a></li>
 <li >
 <a href='#sismember(key::String,member)'>sismember(key::String,member)</a></li>
 <li >
@@ -107,11 +107,11 @@
 <li >
 <a href='#srem(key::String,argv...)'>srem(key::String,argv...)</a></li>
 <li >
-<a href='#srem(key::String,members::Array{T,N})'>srem(key::String,members::Array{T,N})</a></li>
+<a href='#srem(key::String,members::Array{Any,1})'>srem(key::String,members::Array{Any,1})</a></li>
 <li >
-<a href='#sunion(key::String,argv...)'>sunion(key::String,argv...)</a></li>
+<a href='#sunion(key::String,argv::String...)'>sunion(key::String,argv::String...)</a></li>
 <li >
-<a href='#sunion(keys::Array{T,N})'>sunion(keys::Array{T,N})</a></li>
+<a href='#sunion(keys::Array{String,1})'>sunion(keys::Array{String,1})</a></li>
 </ul>
 </li>
 <li >
@@ -126,8 +126,8 @@
 </ul>
 <div class='entries'>
 <div class='entry'>
-<div id='call_get_reply(redisReply::Array{Ptr{RedisReply},N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> call_get_reply(redisReply::Array{Ptr{RedisReply},N})
+<div id='call_get_reply(redisReply::Array{Ptr{RedisReply},1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> call_get_reply(redisReply::Array{Ptr{RedisReply},1})
 </div>
 <div class='entry-body'>
 <p>In a blocking context, this function first checks if there are unconsumed replies to return and returns one if so. Otherwise, it flushes the output buffer to the socket and reads until it has a reply. </p><div class='entry-meta'>
@@ -135,7 +135,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:146</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L146'>Hiredis/src/Hiredis.jl:146</a></td>
 </tr>
 </table>
 </div>
@@ -151,7 +151,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:272</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L272'>Hiredis/src/Hiredis.jl:272</a></td>
 </tr>
 </table>
 </div>
@@ -167,7 +167,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:219</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L219'>Hiredis/src/Hiredis.jl:219</a></td>
 </tr>
 </table>
 </div>
@@ -183,15 +183,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:208</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L208'>Hiredis/src/Hiredis.jl:208</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='docommand(cmd,pipeline)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> docommand(cmd,pipeline)
+<div id='docommand(cmd::String,pipeline::Bool)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> docommand(cmd::String,pipeline::Bool)
 </div>
 <div class='entry-body'>
 <p>Switches between blocking and pipelined command execution according to flag.</p><div class='entry-meta'>
@@ -199,23 +199,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:228</a></td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class='entry'>
-<div id='dump(key::String)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> dump(key::String)
-</div>
-<div class='entry-body'>
-<p>Return a serialized version of the value stored at the specified key.</p><div class='entry-meta'>
-<strong>Details:</strong>
-<table class='meta-table'>
-<tr >
-<td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:287</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L228'>Hiredis/src/Hiredis.jl:228</a></td>
 </tr>
 </table>
 </div>
@@ -231,7 +215,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:277</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L277'>Hiredis/src/Hiredis.jl:277</a></td>
 </tr>
 </table>
 </div>
@@ -247,7 +231,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:544</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L544'>Hiredis/src/Hiredis.jl:544</a></td>
 </tr>
 </table>
 </div>
@@ -263,7 +247,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:539</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L539'>Hiredis/src/Hiredis.jl:539</a></td>
 </tr>
 </table>
 </div>
@@ -279,7 +263,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:124</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L124'>Hiredis/src/Hiredis.jl:124</a></td>
 </tr>
 </table>
 </div>
@@ -295,7 +279,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:155</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L155'>Hiredis/src/Hiredis.jl:155</a></td>
 </tr>
 </table>
 </div>
@@ -311,15 +295,31 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:169</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L169'>Hiredis/src/Hiredis.jl:169</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='hdel(key::String,argv...)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> hdel(key::String,argv...)
+<div id='getkeys(pattern::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> getkeys(pattern::String)
+</div>
+<div class='entry-body'>
+<p>Find all keys matching the given pattern.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L282'>Hiredis/src/Hiredis.jl:282</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='hdel(key::String,argv::String...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hdel(key::String,argv::String...)
 </div>
 <div class='entry-body'>
 <p>Delete one or more hash fields. Multiple fields are provided as additional arguments. </p><div class='entry-meta'>
@@ -327,15 +327,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:385</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L385'>Hiredis/src/Hiredis.jl:385</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='hdel(key::String,fields::Array{T,N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> hdel(key::String,fields::Array{T,N})
+<div id='hdel(key::String,fields::Array{String,1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hdel(key::String,fields::Array{String,1})
 </div>
 <div class='entry-body'>
 <p>Delete one or more hash fields. Multiple fields are provided as an Array. </p><div class='entry-meta'>
@@ -343,7 +343,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:397</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L397'>Hiredis/src/Hiredis.jl:397</a></td>
 </tr>
 </table>
 </div>
@@ -359,7 +359,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:406</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L406'>Hiredis/src/Hiredis.jl:406</a></td>
 </tr>
 </table>
 </div>
@@ -375,7 +375,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:303</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L303'>Hiredis/src/Hiredis.jl:303</a></td>
 </tr>
 </table>
 </div>
@@ -391,7 +391,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:369</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L369'>Hiredis/src/Hiredis.jl:369</a></td>
 </tr>
 </table>
 </div>
@@ -407,7 +407,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:431</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L431'>Hiredis/src/Hiredis.jl:431</a></td>
 </tr>
 </table>
 </div>
@@ -423,7 +423,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:426</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L426'>Hiredis/src/Hiredis.jl:426</a></td>
 </tr>
 </table>
 </div>
@@ -439,7 +439,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:411</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L411'>Hiredis/src/Hiredis.jl:411</a></td>
 </tr>
 </table>
 </div>
@@ -455,15 +455,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:421</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L421'>Hiredis/src/Hiredis.jl:421</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='hmget(key::String,argv...)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> hmget(key::String,argv...)
+<div id='hmget(key::String,argv::String...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmget(key::String,argv::String...)
 </div>
 <div class='entry-body'>
 <p>Get the values of all the given hash fields. Multiple fields are provided as additional arguments. </p><div class='entry-meta'>
@@ -471,15 +471,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:348</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L348'>Hiredis/src/Hiredis.jl:348</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='hmget(key::String,fields::Array{T,N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> hmget(key::String,fields::Array{T,N})
+<div id='hmget(key::String,fields::Array{String,1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmget(key::String,fields::Array{String,1})
 </div>
 <div class='entry-body'>
 <p>Get the values of all the given hash fields. Multiple fields are provided as an Array. </p><div class='entry-meta'>
@@ -487,7 +487,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:360</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L360'>Hiredis/src/Hiredis.jl:360</a></td>
 </tr>
 </table>
 </div>
@@ -503,15 +503,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:312</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L312'>Hiredis/src/Hiredis.jl:312</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='hmset(key::String,attrs::Array{T,N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> hmset(key::String,attrs::Array{T,N})
+<div id='hmset(key::String,attrs::Array{Any,1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmset(key::String,attrs::Array{Any,1})
 </div>
 <div class='entry-body'>
 <p>Set multiple hash fields to multiple values. Fields and values are provided as an Array. </p><div class='entry-meta'>
@@ -519,15 +519,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:324</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L324'>Hiredis/src/Hiredis.jl:324</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='hmset(key::String,attrs::Dict{K,V})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> hmset(key::String,attrs::Dict{K,V})
+<div id='hmset(key::String,attrs::Dict{String,Any})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> hmset(key::String,attrs::Dict{String,Any})
 </div>
 <div class='entry-body'>
 <p>Set multiple hash fields to multiple values. Fields and values are provided as a Dict. </p><div class='entry-meta'>
@@ -535,7 +535,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:336</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L336'>Hiredis/src/Hiredis.jl:336</a></td>
 </tr>
 </table>
 </div>
@@ -551,7 +551,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:297</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L297'>Hiredis/src/Hiredis.jl:297</a></td>
 </tr>
 </table>
 </div>
@@ -567,7 +567,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:416</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L416'>Hiredis/src/Hiredis.jl:416</a></td>
 </tr>
 </table>
 </div>
@@ -583,23 +583,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:267</a></td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class='entry'>
-<div id='keys(pattern::String)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> keys(pattern::String)
-</div>
-<div class='entry-body'>
-<p>Find all keys matching the given pattern.</p><div class='entry-meta'>
-<strong>Details:</strong>
-<table class='meta-table'>
-<tr >
-<td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:282</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L267'>Hiredis/src/Hiredis.jl:267</a></td>
 </tr>
 </table>
 </div>
@@ -615,7 +599,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:262</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L262'>Hiredis/src/Hiredis.jl:262</a></td>
 </tr>
 </table>
 </div>
@@ -633,7 +617,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:251</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L251'>Hiredis/src/Hiredis.jl:251</a></td>
 </tr>
 </table>
 </div>
@@ -649,7 +633,23 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:132</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L132'>Hiredis/src/Hiredis.jl:132</a></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class='entry'>
+<div id='rdump(key::String)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> rdump(key::String)
+</div>
+<div class='entry-body'>
+<p>Return a serialized version of the value stored at the specified key.</p><div class='entry-meta'>
+<strong>Details:</strong>
+<table class='meta-table'>
+<tr >
+<td><strong>source:</strong></td><td >
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L287'>Hiredis/src/Hiredis.jl:287</a></td>
 </tr>
 </table>
 </div>
@@ -665,7 +665,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:292</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L292'>Hiredis/src/Hiredis.jl:292</a></td>
 </tr>
 </table>
 </div>
@@ -681,7 +681,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:436</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L436'>Hiredis/src/Hiredis.jl:436</a></td>
 </tr>
 </table>
 </div>
@@ -697,15 +697,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:451</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L451'>Hiredis/src/Hiredis.jl:451</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='sdiff(key::String,argv...)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> sdiff(key::String,argv...)
+<div id='sdiff(key::String,argv::String...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sdiff(key::String,argv::String...)
 </div>
 <div class='entry-body'>
 <p>Subtract multiple sets. Multiple sets are provided as additional arguments.</p><div class='entry-meta'>
@@ -713,15 +713,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:480</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L480'>Hiredis/src/Hiredis.jl:480</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='sdiff(keys::Array{T,N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> sdiff(keys::Array{T,N})
+<div id='sdiff(keys::Array{String,1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sdiff(keys::Array{String,1})
 </div>
 <div class='entry-body'>
 <p>Subtract multiple sets. Multiple sets are provided as an Array.</p><div class='entry-meta'>
@@ -729,7 +729,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:489</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L489'>Hiredis/src/Hiredis.jl:489</a></td>
 </tr>
 </table>
 </div>
@@ -745,15 +745,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:534</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L534'>Hiredis/src/Hiredis.jl:534</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='sinter(key::String,argv...)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> sinter(key::String,argv...)
+<div id='sinter(key::String,argv::String...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sinter(key::String,argv::String...)
 </div>
 <div class='entry-body'>
 <p>Intersect multiple sets. Multiple sets are provided as additional arguments.</p><div class='entry-meta'>
@@ -761,15 +761,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:498</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L498'>Hiredis/src/Hiredis.jl:498</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='sinter(keys::Array{T,N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> sinter(keys::Array{T,N})
+<div id='sinter(keys::Array{String,1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sinter(keys::Array{String,1})
 </div>
 <div class='entry-body'>
 <p>Intersect multiple sets. Multiple sets are provided as an Array.</p><div class='entry-meta'>
@@ -777,7 +777,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:507</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L507'>Hiredis/src/Hiredis.jl:507</a></td>
 </tr>
 </table>
 </div>
@@ -793,7 +793,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:446</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L446'>Hiredis/src/Hiredis.jl:446</a></td>
 </tr>
 </table>
 </div>
@@ -809,7 +809,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:441</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L441'>Hiredis/src/Hiredis.jl:441</a></td>
 </tr>
 </table>
 </div>
@@ -825,15 +825,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:459</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L459'>Hiredis/src/Hiredis.jl:459</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='srem(key::String,members::Array{T,N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> srem(key::String,members::Array{T,N})
+<div id='srem(key::String,members::Array{Any,1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> srem(key::String,members::Array{Any,1})
 </div>
 <div class='entry-body'>
 <p>Remove one or more members from a set. Members are provided as an Array. </p><div class='entry-meta'>
@@ -841,15 +841,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:471</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L471'>Hiredis/src/Hiredis.jl:471</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='sunion(key::String,argv...)' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> sunion(key::String,argv...)
+<div id='sunion(key::String,argv::String...)' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sunion(key::String,argv::String...)
 </div>
 <div class='entry-body'>
 <p>Add multiple sets. Multiple sets are provided as additional arguments.</p><div class='entry-meta'>
@@ -857,15 +857,15 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:516</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L516'>Hiredis/src/Hiredis.jl:516</a></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class='entry'>
-<div id='sunion(keys::Array{T,N})' class='entry-name category-method'>
-<div class='category'>[method] &mdash; </div> sunion(keys::Array{T,N})
+<div id='sunion(keys::Array{String,1})' class='entry-name category-method'>
+<div class='category'>[method] &mdash; </div> sunion(keys::Array{String,1})
 </div>
 <div class='entry-body'>
 <p>Add multiple sets. Multiple sets are provided as an Array.</p><div class='entry-meta'>
@@ -873,7 +873,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:525</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L525'>Hiredis/src/Hiredis.jl:525</a></td>
 </tr>
 </table>
 </div>
@@ -889,7 +889,7 @@
 <table class='meta-table'>
 <tr >
 <td><strong>source:</strong></td><td >
-<a href='file:///Users/markmo/src/julia/datagen/src/RedisClient.jl'>/Users/markmo/src/julia/datagen/src/RedisClient.jl:194</a></td>
+<a href='https://github.com/markmo/Hiredis.jl/tree/5f69234f5b444cdd50d854c6dd314bf09f297f6a/src/Hiredis.jl#L194'>Hiredis/src/Hiredis.jl:194</a></td>
 </tr>
 </table>
 </div>

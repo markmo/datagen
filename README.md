@@ -29,62 +29,62 @@ To install Homebrew:
 
 First of all, to install Julia:
 
-	brew update
-	brew tap staticfloat/julia
-	brew install --HEAD julia
-	brew test -v --HEAD julia
+    brew update
+    brew tap staticfloat/julia
+    brew install --HEAD julia
+    brew test -v --HEAD julia
 
 If this fails, gcc may not be installed or out of date.
 
-	brew rm gcc
-	brew install gcc
+    brew rm gcc
+    brew install gcc
 
 If you already have R installed using Homebrew, then you may need to reinstall it as it may reference an older version of gfortran.
 
-	brew rm R
-	brew install R
+    brew rm R
+    brew install R
 
 Next, install hiredis. Hiredis is the C client to Redis. The Julia Redis Client wraps hiredis.
 
-	brew install hiredis
+    brew install hiredis
 
 Install Redis.
 
-	brew install redis
+    brew install redis
 
 To start redis, open a new command window and run:
 
-	redis-server
+    redis-server
 
 You can open a command line connection to the Redis Server to test it independently by opening a new command window and running:
 
-	redis-cli
+    redis-cli
 
 The default Redis port is 6379. See the [Redis website](http://redis.io/).
 
 Clone this app locally. Change to the src subdirectory. For example:
 
-	git clone http://<YOUR USERNAME>@stash.snbc.io/scm/col/datagen.git
-	cd datagen/src
+    git clone http://<YOUR USERNAME>@stash.snbc.io/scm/col/datagen.git
+    cd datagen
 
-Currently, you must create a "data" subdirectory under "src".
+DataGen also depends on the [Hiredis.jl](https://github.com/markmo/Hiredis.jl) package. To install this package, start Julia and run:
 
-	mkdir <PROJECT HOME>/src/data
+    julia> Pkg.clone("https://github.com/markmo/Hiredis.jl.git")
 
-Edit the parameters at the top of run.jl then execute:
+Exit Julia. Edit the parameters at the top of run.jl. Change to the "src" directory, then execute run.jl from the OS command line:
 
-	julia run.jl
+    julia run.jl
 
 The datasets above will be created in the data directory.
 
 To use the app interactively:
 
-	julia
+    julia
 
-	julia> using DataGen
-	julia> using RedisClient
-	julia> start_session()
-	julia> profiles = get_customer_profiles(10)
+    julia> using DataGen
+    julia> using Hiredis
+    julia> start_session()
+    julia> profiles = get_customer_profiles(10)
 
 See run.jl as an example.
 

@@ -1,6 +1,6 @@
 module KeyManager
 
-using RedisClient
+using Hiredis
 using DataFrames
 
 function initialize_key_manager(host::String, port::Int64)

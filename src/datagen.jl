@@ -1,25 +1,28 @@
 module DataGen
 
+srcdir = dirname(@__FILE__)
+require(string(srcdir, "/KeyManager.jl"))
+
 using KeyManager
 using StatsBase
 using Distributions
 using DataFrames
-using RedisClient
+using Hiredis
 using Logging
 
 function rep(var, n)
     [var for i = 1:n]
 end
 
-function get_since_date(enddate; startdate="1970-01-01", min_days=100, min_age_years=5, n=1)
+function get_since_date(enddate::String; startdate="1970-01-01", min_days=100, min_age_years=5, n=1)
     st = Date(startdate) + Dates.Year(min_age_years)
     et = Date(enddate) - Dates.Day(min_days)
     dt = int(et - st)
     ev = sort(rand(1:dt, n))
-    dates = []
-    for x in ev
-        dt = st + Dates.Day(x)
-        push!(dates, string(dt))
+    dates = fill("", n)
+    for i = 1:n
+        d = st + Dates.Day(ev[i])
+        dates[i] = string(d)
     end
     if n == 1
         dates[1]
@@ -28,16 +31,17 @@ function get_since_date(enddate; startdate="1970-01-01", min_days=100, min_age_y
     end
 end
 
+const branches = Dict{String,Array{String}}(
+    "VIC" => String["Bourke St Mall", "South Yarra", "Toorak", "Northcote", "Moonee Ponds", "Footscray Mall"],
+    "NSW" => String["242 Pitt St", "Chifley Square", "Darlinghurst", "Double Bay", "Crows Nest", "Neutral Bay"],
+    "QLD" => String["West End", "Fortitude Valley", "Woolloongabba", "Carnidale", "Mount Gravatt Cental", "Wynnum"],
+    "WA"  => String["Allendale Square", "Northbridge", "West Perth", "Leederville", "Mount Lawley"],
+    "SA"  => String["Hutt St", "Gouger St", "Rundell Mall", "North Adelaide", "Norwood"],
+    "ACT" => String["Canberra Centre", "Dickson", "Manuka", "Fyshwick"],
+    "NT"  => String["Darwin", "Palmerston", "Winnellie", "Casuarina"]
+    )
+
 function get_domicile_branch(state::String)
-    branches = [
-        "VIC" => ["Bourke St Mall", "South Yarra", "Toorak", "Northcote", "Moonee Ponds", "Footscray Mall"],
-        "NSW" => ["242 Pitt St", "Chifley Square", "Darlinghurst", "Double Bay", "Crows Nest", "Neutral Bay"],
-        "QLD" => ["West End", "Fortitude Valley", "Woolloongabba", "Carnidale", "Mount Gravatt Cental", "Wynnum"],
-        "WA"  => ["Allendale Square", "Northbridge", "West Perth", "Leederville", "Mount Lawley"],
-        "SA"  => ["Hutt St", "Gouger St", "Rundell Mall", "North Adelaide", "Norwood"],
-        "ACT" => ["Canberra Centre", "Dickson", "Manuka", "Fyshwick"],
-        "NT"  => ["Darwin", "Palmerston", "Winnellie", "Casuarina"]
-        ]
     sample(branches[state])
 end
 
@@ -52,16 +56,22 @@ function get_credit_behavioural_risk_rating()
       ])
 end
 
+const male_first_names = String["Bob", "Jim", "Richard", "David"]
+
+const female_first_names = String["Alice", "Jane", "Lynley", "Ellen"]
+
 function get_first_name(gender::String)
     if gender == "M"
-        sample(["Bob", "Jim", "Richard", "David"])
+        sample(male_first_names)
     else
-        sample(["Alice", "Jane", "Lynley", "Ellen"])
+        sample(female_first_names)
     end
 end
 
+const last_names = String["Smith", "Jones", "Wong", "Khan", "Diaz", "Papadakis", "Costa", "Williams", "Nguyen", "Harris"]
+
 function get_last_name()
-    sample(["Smith", "Jones", "Wong", "Khan", "Diaz", "Papadakis", "Costa", "Williams", "Nguyen", "Harris"])
+    sample(last_names)
 end
 
 function get_name_prefix(gender::String)
@@ -82,7 +92,7 @@ function get_occupation(occupation_cd::String)
     end
 end
 
-function get_birth_date(enddate)
+function get_birth_date(enddate::String)
     age = sample([
         sample(20:24, 96, replace=true),
         sample(25:29, 99, replace=true),
@@ -109,18 +119,20 @@ function get_employment_status()
     end
 end
 
+const employers = String["HR Block", "BHP Bilton", "Rio Tinto", "Telstra", "Wesfarmers", "Woolworths", "Brown Brothers", "Bulla Dairy Foods", "Coca-Cola Amatil", "Foster's Group"]
+
 function get_employer()
-    sample(["HR Block", "BHP Bilton", "Rio Tinto", "Telstra", "Wesfarmers", "Woolworths", "Brown Brothers", "Bulla Dairy Foods", "Coca-Cola Amatil", "Foster's Group"])
+    sample(employers)
 end
 
-function get_phone(state)
-    num = sample(10000000:99999999)
-    prefixes = ["VIC" => "03", "NSW" => "02", "QLD" => "07", "ACT" => "06", "SA" => "08", "WA" => "08", "NT" => "08", "TAS" => "03"]
-    string(prefixes[state], num)
+const prefixes = Dict{String,String}("VIC" => "03", "NSW" => "02", "QLD" => "07", "ACT" => "06", "SA" => "08", "WA" => "08", "NT" => "08", "TAS" => "03")
+
+function get_phone(state::String)
+    string(prefixes[state], string(rand())[3:10])
 end
 
 function get_mobile()
-    string("04", sample(1000000:9999999))
+    string("04", string(rand())[3:10])
 end
 
 function get_state()
@@ -134,32 +146,41 @@ function get_state()
         "NT"))
 end
 
+const postcodes = Dict{String,String}(
+    "VIC" => "3121",
+    "NSW" => "2089",
+    "QLD" => "4014",
+    "WA"  => "6025",
+    "SA"  => "5035",
+    "ACT" => "2600",
+    "NT"  => "0801"
+    )
+
 function get_postcode(state::String)
-    postcodes = [
-        "VIC" => "3121",
-        "NSW" => "2089",
-        "QLD" => "4014",
-        "WA"  => "6025",
-        "SA"  => "5035",
-        "ACT" => "2600",
-        "NT"  => "0801"
-        ]
     postcodes[state]
 end
 
+const street_names = String["Eskdale", "Queen", "Johnson", "Egan", "Rolleston", "Smith"]
+
 function get_street_name()
-  sample(["Eskdale", "Queen", "Johnson", "Egan", "Rolleston", "Smith"])
+  sample(street_names)
 end
 
+const street_types = String["Street", "Road", "Place", "Avenue", "Parade", "Lane", "Crescent", "Close"]
+
 function get_street_type()
-  sample(["Street", "Road", "Place", "Avenue", "Parade", "Lane", "Crescent", "Close"])
+  sample(street_types)
 end
+
+const contact_methods = String["marketing email","home phone","mobile phone","work phone"]
+
+const address_types = String["mail", "residential","residential"]
 
 function get_person(gender::String, state::String, id, enddate::String)
     occupation_cd = sample(["0001", "0006", "0059"])
     first_name = get_first_name(gender)
     last_name = get_last_name()
-    preferred_contact_method = sample(["marketing email","home phone","mobile phone","work phone"])
+    preferred_contact_method = sample(contact_methods)
     home_phone = get_phone(state)
     mobile_phone = get_mobile()
     work_phone = get_phone(state)
@@ -195,7 +216,7 @@ function get_person(gender::String, state::String, id, enddate::String)
         preferred_contact_method = preferred_contact_method,
         preferred_email         = preferred_email,
         preferred_phone         = preferred_phone,
-        preferred_address_type  = sample(["mail", "residential","residential"])
+        preferred_address_type  = sample(address_types)
         )
 end
 
@@ -262,7 +283,7 @@ function get_customer_profiles(n=1000, enddate="2014-10-31")
         customer = get_customer(person, state, enddate, customer_sk)
         customers = rbind(customers, customer)
     end
-    ["persons" => persons, "mail_addresses" => mail_addresses, "residential_addresses" => residential_addresses, "customers" => customers]
+    persons, mail_addresses, residential_addresses, customers
 end
 
 function get_customer_account_role_cd(account_type_cd)
@@ -384,7 +405,7 @@ function get_opening_balance(account_type_code::String)
     end
 end
 
-function get_account_details(customer_sk, enddate::String)
+function get_account_details(customer_sk)
     core_customer_details = get_customer_accounts(customer_sk)
     DataFrame(
         account_sk              = core_customer_details[:account_key],
@@ -467,20 +488,22 @@ function get_num_interactions(days)
     sample([0, 0, 1, 2], days, replace=true)
 end
 
-function get_interactions(ib_yn, gomoney_yn, num_interactions)
+function get_interactions(customer_key, enddate, days)
+    ib_yn = get_customer_attribute(customer_key, "ib_yn")
+    gomoney_yn = get_customer_attribute(customer_key, "gomoney_yn")
     interactions_per_day = get_num_interactions(days)
     total_num_interactions = sum(interactions_per_day)
     channel_type_cd = get_channel_type_cd(ib_yn, gomoney_yn, total_num_interactions)
     channel_type_desc = get_channel_type_desc(channel_type_cd)
-    start_times = []
-    end_times = []
+    start_times = String[]
+    end_times = String[]
     start_ts = DateTime(enddate) - Dates.Day(days + 1)
     for i in 1:days
         start_ts = start_ts + Dates.Day(1)
         if interactions_per_day > 0
             end_ts = start_ts + Dates.Day(sample(10:180))
-            push!(start_times, start_ts)
-            push!(end_times, end_ts)
+            push!(start_times, string(start_ts))
+            push!(end_times, string(end_ts))
         end
     end
     DataFrame(
@@ -532,11 +555,11 @@ end
 
 function write_data(n, enddate="2014-10-31", host="127.0.0.1", port=6379)
     start_session(host, port)
-    profiles = get_customer_profiles(n, enddate)
-    writetable("data/persons.csv", profiles["persons"])
-    writetable("data/mail_addresses.csv", profiles["mail_addresses"])
-    writetable("data/residential_addresses.csv", profiles["residential_addresses"])
-    writetable("data/customers.csv", profiles["customers"])
+    persons, mail_addresses, residential_addresses, customers = get_customer_profiles(n, enddate)
+    writetable("data/persons.csv", persons)
+    writetable("data/mail_addresses.csv", mail_addresses)
+    writetable("data/residential_addresses.csv", residential_addresses)
+    writetable("data/customers.csv", customers)
 end
 
 export get_customer_profiles, write_data, get_account_holdings, get_account_details, get_account_balance,
