@@ -8,9 +8,11 @@ using StatsBase
 using Distributions
 using DataFrames
 using Hiredis
+using Docile
 using Logging
 
 Logging.configure(level=WARNING)
+@docstrings
 
 function rep(var::Any, n::Int)
     [var for i = 1:n]
@@ -137,6 +139,7 @@ function create_mobile()
     string("04", string(rand())[3:10])
 end
 
+@doc "Returns an Australian state with a realistic frequency distribution." ->
 function create_state()
     sample([
         rep("VIC", 25),
@@ -180,6 +183,14 @@ const contact_methods = ["marketing email", "home phone", "mobile phone", "work 
 
 const address_types = ["mail", "residential", "residential"]
 
+@doc md"""
+Generates the t_Person table.
+
+* gender The gender of the person
+* state An Australian state (standard abbreviations). Used to generate the area codes of the phone numbers associated with the customer.
+* customer_key A record id number, used as the surrogate key.
+* enddate The final date for data generation for the customer asset.
+""" ->
 function create_person(gender::ASCIIString, state::ASCIIString, customer_key::ASCIIString, enddate::ASCIIString)
     occupation_code = sample(occupation_codes)
     first_name = create_first_name(gender)
@@ -224,6 +235,12 @@ function create_person(gender::ASCIIString, state::ASCIIString, customer_key::AS
         )
 end
 
+@doc md"""
+Generates the t_Mail_Contact or t_Residential_Contact table.
+
+* state An Australian state (standard abbreviations). Used as the state for the address record and to generate a realistic postcode.
+* customer_key A record id number, used as the surrogate key.
+""" ->
 function create_address(state::ASCIIString, customer_key::ASCIIString)
     DataFrame(
         customer_sk                     = customer_key,
@@ -238,6 +255,14 @@ function create_address(state::ASCIIString, customer_key::ASCIIString)
         )
 end
 
+@doc md"""
+Generates the t_Customer table.
+
+* person
+* state An Australian state (standard abbrevations). Used to generate the domicled branch of the customer.
+* enddate The final date for data generation for the customer asset.
+* customer_key A record id number, used as the surrogate key.
+""" ->
 function create_customer(person::DataFrame, state::ASCIIString, enddate::ASCIIString, customer_key::ASCIIString)
     customer_since_date = create_since_date(enddate, startdate=person[1,:birth_dt])
     set_customer_since_date(customer_key, customer_since_date)
@@ -267,6 +292,12 @@ function create_customer(person::DataFrame, state::ASCIIString, enddate::ASCIISt
         )
 end
 
+@doc md"""
+Generates the t_Person, t_Customer, t_Mail_Contact and t_Residential_Contact tables.
+
+* n The number of profiles to generate
+* enddate The final date for data generation for the customer asset.
+""" ->
 function create_customer_profiles(n::Int=1000, enddate::ASCIIString="2014-10-31")
     customer_key_range = get_new_customer_key_range(n)
     mail_addresses = DataFrame()
@@ -307,6 +338,11 @@ function create_customer_account_role_desc(account_type_code::ASCIIString)
     end
 end
 
+@doc md"""
+Generates t_Customer_Account.
+
+* customer_key A record id number, used as the surrogate key.
+""" ->
 function create_account_holdings(customer_key::ASCIIString)
     num_accounts = sample([rep(1, 11), rep(2, 3), rep(3, 6), rep(4, 6), rep(5, 6)])
     if num_accounts == 1
@@ -416,6 +452,12 @@ function create_opening_balance(account_type_code::ASCIIString)
     end
 end
 
+@doc md"""
+Generates the t_Account table.
+
+* customer_key A record id number, used as the surrogate key.
+* enddate The final date for data generation for the customer asset.
+""" ->
 function create_account_details(customer_key::ASCIIString)
     core_customer_details = get_customer_accounts(customer_key)
     DataFrame(
@@ -430,6 +472,13 @@ function create_account_details(customer_key::ASCIIString)
         )
 end
 
+@doc md"""
+Generates the t_Account_Balance table.
+
+* customer_key A record id number, used as the surrogate key.
+* enddate The final date for data generation for the customer asset.
+* days The number of days to generate data for.
+""" ->
 function create_account_balance(account_key::ASCIIString, account_type_code::ASCIIString, enddate::ASCIIString, days::Int)
     dt = Date(enddate) - Dates.Day(days)
 #     account_type_code = get_account_type(account_key)
@@ -443,6 +492,13 @@ function create_account_balance(account_key::ASCIIString, account_type_code::ASC
         )
 end
 
+@doc md"""
+Generates the t_Account_Transactions table.
+
+* customer_key A record id number, used as the surrogate key.
+* enddate The final date for data generation for the customer asset.
+* days The number of days to generate data for.
+""" ->
 function create_transactions(account_key::ASCIIString, account_type_code::ASCIIString, enddate::ASCIIString, days::Int)
 #     account_type_code = get_account_type(account_key)
     transactions_per_day = create_num_transactions(account_type_code, days)
@@ -499,24 +555,40 @@ function create_num_interactions(days::Int)
     sample([0, 0, 1, 2], days, replace=true)
 end
 
+@doc md"""
+Generates the t_Interactions table.
+
+* customer_key A record id number, used as the surrogate key.
+* enddate The final date for data generation for the customer asset.
+* days The number of days to generate data for.
+""" ->
 function create_interactions(customer_key::ASCIIString, enddate::ASCIIString, days::Int)
     ib_yn = get_customer_attribute(customer_key, "ib_yn")
     gomoney_yn = get_customer_attribute(customer_key, "gomoney_yn")
     interactions_per_day = create_num_interactions(days)
     total_num_interactions = sum(interactions_per_day)
     channel_type_codes = create_channel_type_codes(ib_yn, gomoney_yn, total_num_interactions)
-    channel_type_descs = create_channel_type_descs(channel_type_cd)
+    channel_type_descs = create_channel_type_descs(channel_type_codes)
     start_times = String[]
     end_times = String[]
     start_ts = DateTime(enddate) - Dates.Day(days + 1)
     for i in 1:days
         start_ts = start_ts + Dates.Day(1)
-        if interactions_per_day > 0
-            end_ts = start_ts + Dates.Day(sample(10:180))
-            push!(start_times, string(start_ts))
-            push!(end_times, string(end_ts))
+        if interactions_per_day[i] > 0
+            for j in 1:interactions_per_day[i]
+                end_ts = start_ts + Dates.Day(sample(10:180))
+                push!(start_times, string(start_ts))
+                push!(end_times, string(end_ts))
+            end
         end
     end
+
+    debug(string("total_num_interactions size:", total_num_interactions))
+    debug(string("start_times size:", length(start_times)))
+    debug(string("end_times size:", length(end_times)))
+    debug(string("channel_type_codes size:", length(channel_type_codes)))
+    debug(string("channel_type_descs size:", length(channel_type_descs)))
+
     DataFrame(
         interaction_sk                  = get_new_interaction_key_range(total_num_interactions, customer_key),
         interaction_start_ts            = start_times,
@@ -528,6 +600,13 @@ function create_interactions(customer_key::ASCIIString, enddate::ASCIIString, da
         )
 end
 
+@doc md"""
+Generates the t_Channel_Usage table.
+
+* customer_key A record id number, used as the surrogate key.
+* enddate The final date for data generation for the customer asset.
+* days The number of days to generate data for.
+""" ->
 function create_channel_usage(customer_key::ASCIIString, enddate::ASCIIString, days::Int)
     dt = Date(enddate) - Dates.Day(days)
     customer_since_date = get_customer_since_date(customer_key)
@@ -579,7 +658,7 @@ function create_joint_accounts()
             append!(account_role_codes, rep("SE", n))
             append!(account_role_descs, rep("Secondary", n))
         else
-            append!(account_role_codes, rep("Secondary", n))
+            append!(account_role_codes, rep("JO", n))
             append!(account_role_descs, rep("Joint", n))
         end
         sample_account_keys = sample(account_keyset, n)

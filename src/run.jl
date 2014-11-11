@@ -34,8 +34,8 @@ for customer_key in customer_keys
     usage = create_channel_usage(customer_key, enddate, balance_days)
     channel_usage = rbind(channel_usage, usage)
 
-    ib_yn = get_customer_attribute("customer_key", "ib_yn")
-    gm_yn = get_customer_attribute("customer_key", "gomoney_yn")
+    ib_yn = get_customer_attribute(customer_key, "ib_yn")
+    gm_yn = get_customer_attribute(customer_key, "gomoney_yn")
 
     if ib_yn == "Y" || gm_yn == "Y"
         interacts = create_interactions(customer_key, enddate, transaction_days)
@@ -68,6 +68,9 @@ for account_key in account_keys
     end
 end
 
+joint_accounts = create_joint_accounts()
+customer_accounts = rbind(customer_accounts, joint_accounts)
+
 writetable(string(srcdir, "/../data/persons.csv"), persons)
 writetable(string(srcdir, "/../data/mail_addresses.csv"), mail_addresses)
 writetable(string(srcdir, "/../data/residential_addresses.csv"), residential_addresses)
@@ -78,3 +81,4 @@ writetable(string(srcdir, "/../data/channel_usage.csv"), channel_usage)
 writetable(string(srcdir, "/../data/customer_accounts.csv"), customer_accounts)
 writetable(string(srcdir, "/../data/accounts.csv"), accounts)
 writetable(string(srcdir, "/../data/interactions.csv"), interactions)
+writetable(string(srcdir, "/../data/customer_interactions.csv"), customer_interactions)
