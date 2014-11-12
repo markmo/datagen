@@ -644,7 +644,7 @@ end
 
 const joint_account_types = ["TXN", "CC", "MT", "SV"]
 
-function create_joint_accounts()
+function create_joint_accounts(customer_accounts::DataFrame)
     info("Creating joint accounts")
     customer_keys = ASCIIString[]
     account_keys = ASCIIString[]
@@ -654,22 +654,54 @@ function create_joint_accounts()
     for account_type in joint_account_types
         account_keyset = get_members(string("account_type:", account_type))
         n = int(length(account_keyset) * 0.1)
-        if account_type == "CC"
-            append!(account_role_codes, rep("SE", n))
-            append!(account_role_descs, rep("Secondary", n))
-        else
-            append!(account_role_codes, rep("JO", n))
-            append!(account_role_descs, rep("Joint", n))
-        end
+#         if account_type == "CC"
+#             append!(account_role_codes, rep("SE", n))
+#             append!(account_role_descs, rep("Secondary", n))
+#         else
+#             append!(account_role_codes, rep("JO", n))
+#             append!(account_role_descs, rep("Joint", n))
+#         end
         sample_account_keys = sample(account_keyset, n)
-        append!(account_keys, sample_account_keys)
+#         append!(account_keys, sample_account_keys)
         for account_key in sample_account_keys
             primary_customer_key, account_open_date = get_account_attribute_selection(account_key, ["customer_key", "open_date"])
+#             if account_type != "CC"
+#                 debug(string("primary_customer_key: ", primary_customer_key))
+# #                 sub_customer_accounts = customer_accounts[customer_accounts[:customer_sk] .== primary_customer_key, :]
+# #                 println(sub_customer_accounts)
+#                 debug(string("account_key: ", account_key))
+# #                 println(customer_accounts[customer_accounts[:account_sk] .== account_key, [:customer_account_role_cd, :customer_account_role_desc]])
+# #                 sub_customer_accounts[sub_customer_accounts[:account_sk] .== account_key, [:customer_account_role_cd, :customer_account_role_desc]] = DataFrame(customer_account_role_cd="PR", customer_account_role_desc="Primary")
+# #                 println(sub_customer_accounts)
+# #                 println(customer_accounts[customer_accounts[:customer_sk] .== primary_customer_key, :])
+#                 customer_accounts[customer_accounts[:account_sk] .== account_key, [:customer_account_role_cd, :customer_account_role_desc]] = DataFrame(customer_account_role_cd="PR", customer_account_role_desc="Primary")
+# #                 println(customer_accounts[customer_accounts[:account_sk] .== account_key, [:customer_account_role_cd, :customer_account_role_desc]])
+#             end
             state = get_customer_attribute(string("customer:", primary_customer_key), "state")
-            push!(account_open_dates, account_open_date)
+#             push!(account_open_dates, account_open_date)
             year = Dates.year(Date(account_open_date))
-            second_customer_key = sample(get_intersection(string("state:", state), string("year:", year)))
-            push!(customer_keys, second_customer_key)
+            matching_keys = get_intersection(string("state:", state), string("year:", year))
+            debug("matching_keys:")
+            debug(matching_keys)
+            second_customer_keys = filter(x -> x != primary_customer_key, get_intersection(string("state:", state), string("year:", year)))
+            debug("second_customer_keys:")
+            debug(second_customer_keys)
+            if !isempty(second_customer_keys)
+                second_customer_key = sample(second_customer_keys)
+                push!(customer_keys, second_customer_key)
+                push!(account_keys, account_key)
+                push!(account_open_dates, account_open_date)
+                if account_type == "CC"
+                    push!(account_role_codes, "SE")
+                    push!(account_role_descs, "Secondary")
+                else
+                    debug(string("primary_customer_key: ", primary_customer_key))
+                    debug(string("account_key: ", account_key))
+                    customer_accounts[customer_accounts[:account_sk] .== account_key, [:customer_account_role_cd, :customer_account_role_desc]] = DataFrame(customer_account_role_cd="PR", customer_account_role_desc="Primary")
+                    push!(account_role_codes, "JO")
+                    push!(account_role_descs, "Joint")
+                end
+            end
         end
     end
 

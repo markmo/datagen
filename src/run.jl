@@ -14,6 +14,7 @@ redis_host = "127.0.0.1"
 redis_port = 6379
 
 start_session(redis_host, redis_port)
+flushall()
 
 persons, mail_addresses, residential_addresses, customers = create_customer_profiles(num_customers, enddate)
 customer_keys = persons[:customer_sk]
@@ -68,7 +69,7 @@ for account_key in account_keys
     end
 end
 
-joint_accounts = create_joint_accounts()
+joint_accounts = create_joint_accounts(customer_accounts)
 customer_accounts = rbind(customer_accounts, joint_accounts)
 
 writetable(string(srcdir, "/../data/persons.csv"), persons)
