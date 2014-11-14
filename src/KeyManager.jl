@@ -208,6 +208,10 @@ function get_intersection(argv::ASCIIString...)
     sinter(argv...)
 end
 
+function get_diff(set_name::ASCIIString, other_sets::ASCIIString...)
+    sdiff(set_name, other_sets...)
+end
+
 export initialize_key_manager, get_new_customer_key, get_new_account_key, get_new_transaction_key,
     get_new_interaction_key, get_new_customer_key_range, set_customer_attribute,
     set_customer_attributes, get_customer_attribute, get_customer_attribute_selection,
@@ -217,6 +221,6 @@ export initialize_key_manager, get_new_customer_key, get_new_account_key, get_ne
     get_account_attribute, get_account_attribute_selection, get_account_attributes,
     set_account_open_date, get_account_open_date, set_account_open_dates, get_customer_account_keys,
     get_account_open_dates, get_account_type, get_customer_accounts, get_customer_interaction_keys,
-    add_to_set, get_members, get_intersection
+    add_to_set, get_members, get_intersection, get_diff
 
 end

@@ -652,7 +652,7 @@ function create_joint_accounts(customer_accounts::DataFrame)
     account_role_codes = ASCIIString[]
     account_role_descs = ASCIIString[]
     for account_type in joint_account_types
-        account_keyset = get_members(string("account_type:", account_type))
+        account_keyset = get_diff(string("account_type:", account_type), "used_account_keys")
         n = int(length(account_keyset) * 0.1)
 #         if account_type == "CC"
 #             append!(account_role_codes, rep("SE", n))
@@ -662,6 +662,7 @@ function create_joint_accounts(customer_accounts::DataFrame)
 #             append!(account_role_descs, rep("Joint", n))
 #         end
         sample_account_keys = sample(account_keyset, n)
+        add_to_set("used_account_keys", sample_account_keys...)
 #         append!(account_keys, sample_account_keys)
         for account_key in sample_account_keys
             primary_customer_key, account_open_date = get_account_attribute_selection(account_key, ["customer_key", "open_date"])
@@ -697,6 +698,7 @@ function create_joint_accounts(customer_accounts::DataFrame)
                 else
                     debug(string("primary_customer_key: ", primary_customer_key))
                     debug(string("account_key: ", account_key))
+                    debug(customer_accounts[customer_accounts[:account_sk] .== account_key, [:customer_account_role_cd, :customer_account_role_desc]])
                     customer_accounts[customer_accounts[:account_sk] .== account_key, [:customer_account_role_cd, :customer_account_role_desc]] = DataFrame(customer_account_role_cd="PR", customer_account_role_desc="Primary")
                     push!(account_role_codes, "JO")
                     push!(account_role_descs, "Joint")
