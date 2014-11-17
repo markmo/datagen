@@ -44,7 +44,8 @@ function generate(i::Int, num_customers::Int, block_size::Int, enddate::ASCIIStr
     interaction_keys = ASCIIString[]
     interaction_customer_keys = ASCIIString[]
 
-    for customer_key in customer_keys
+    for key in customer_keys
+        customer_key = string(key)
         account_holdings = create_account_holdings(customer_key)
         global customer_accounts = rbind(customer_accounts, account_holdings)
         account_details = create_account_details(customer_key)
@@ -68,8 +69,8 @@ function generate(i::Int, num_customers::Int, block_size::Int, enddate::ASCIIStr
     end
 
     customer_interactions = DataFrame(
-        customer_sk    = interaction_customer_keys,
-        interaction_sk = interaction_keys
+        customer_sk    = [int(key) for key in interaction_customer_keys],
+        interaction_sk = [int(key) for key in interaction_keys]
         )
 
     account_keys = accounts[:account_sk]
@@ -77,7 +78,8 @@ function generate(i::Int, num_customers::Int, block_size::Int, enddate::ASCIIStr
     account_balances = DataFrame()
     account_transactions = DataFrame()
 
-    for account_key in account_keys
+    for key in account_keys
+        account_key = string(key)
         account_type_code = get_account_type(account_key)
         account_balance = create_account_balance(account_key, account_type_code, enddate, balance_days)
         account_balances = rbind(account_balances, account_balance)
@@ -107,3 +109,7 @@ for i in 1:n
     num_cust = i < n ? block_size : rem
     generate(i, num_cust, block_size, enddate, balance_days, transaction_days)
 end
+
+f = open(string(srcdir, "/../numblocks"), "w")
+write(f, n)
+close(f)
