@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-numblocksfile="$scriptdir/../numblocks"
-numblocks=$(cat $numblocksfile)
 
 julia -p 4 $scriptdir/../src/run.jl > /var/log/datagen/datagen.log
+
+numblocksfile="$scriptdir/../numblocks"
+numblocks=$(cat $numblocksfile)
 
 echo "numblocks=$numblocks"
 
