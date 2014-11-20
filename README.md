@@ -107,6 +107,16 @@ DataGen also depends on the [HiRedis.jl](https://github.com/markmo/HiRedis.jl) p
 
     julia> Pkg.clone("HiRedis")
 
+Other package dependencies include:
+
+    Pkg.add("StatsBase")
+    Pkg.add("Distributions")
+    Pkg.add("DataFrames")
+    Pkg.add("Docile")
+    Pkg.add("Logging")
+    Pkg.add("Compat")        # For Julia version 0.3.x backwards compatibility
+    Pkg.add("Dates")         # only if using Julia version 0.3.x
+
 Exit Julia. Edit the parameters at the top of run.jl. Change to the "src" directory, then execute run.jl from the OS command line:
 
     julia run.jl

@@ -10,6 +10,11 @@ using DataFrames
 using HiRedis
 using Docile
 using Logging
+using Compat
+
+if VERSION <= v"0.3"
+using Dates
+end
 
 Logging.configure(level=WARNING)
 @docstrings
@@ -35,7 +40,7 @@ function create_since_date(enddate::ASCIIString; startdate::ASCIIString="1970-01
     end
 end
 
-const branches = Dict{ASCIIString,Array{ASCIIString,1}}(
+const branches = @compat Dict{ASCIIString,Array{ASCIIString,1}}(
     "VIC" => ["Bourke St Mall", "South Yarra", "Toorak", "Northcote", "Moonee Ponds", "Footscray Mall"],
     "NSW" => ["242 Pitt St", "Chifley Square", "Darlinghurst", "Double Bay", "Crows Nest", "Neutral Bay"],
     "QLD" => ["West End", "Fortitude Valley", "Woolloongabba", "Carnidale", "Mount Gravatt Cental", "Wynnum"],
@@ -129,7 +134,7 @@ function create_employer()
     sample(employers)
 end
 
-const prefixes = Dict{ASCIIString,ASCIIString}("VIC" => "03", "NSW" => "02", "QLD" => "07", "ACT" => "06", "SA" => "08", "WA" => "08", "NT" => "08", "TAS" => "03")
+const prefixes = @compat Dict{ASCIIString,ASCIIString}("VIC" => "03", "NSW" => "02", "QLD" => "07", "ACT" => "06", "SA" => "08", "WA" => "08", "NT" => "08", "TAS" => "03")
 
 function create_phone(state::ASCIIString)
     string(prefixes[state], string(rand())[3:10])
@@ -151,7 +156,7 @@ function create_state()
         "NT"])
 end
 
-const postcodes = Dict{ASCIIString,ASCIIString}(
+const postcodes = @compat Dict{ASCIIString,ASCIIString}(
     "VIC" => "3121",
     "NSW" => "2089",
     "QLD" => "4014",
@@ -379,7 +384,7 @@ function create_account_holdings(customer_key::ASCIIString)
 end
 
 function create_account_type_descs(account_type_codes::Array{ASCIIString,1})
-    account_types = Dict{ASCIIString,ASCIIString}(
+    account_types = @compat Dict{ASCIIString,ASCIIString}(
         "MT" => "Mortgage",
         "CC" => "Credit Card",
         "TD" => "Term Deposit",
