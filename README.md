@@ -103,9 +103,9 @@ Clone this app locally. Change to the src subdirectory. For example:
     git clone http://<YOUR USERNAME>@stash.snbc.io/scm/col/datagen.git
     cd datagen
 
-DataGen also depends on the [Hiredis.jl](https://github.com/markmo/Hiredis.jl) package. To install this package, start Julia and run:
+DataGen also depends on the [HiRedis.jl](https://github.com/markmo/HiRedis.jl) package. To install this package, start Julia and run:
 
-    julia> Pkg.clone("https://github.com/markmo/Hiredis.jl.git")
+    julia> Pkg.clone("HiRedis")
 
 Exit Julia. Edit the parameters at the top of run.jl. Change to the "src" directory, then execute run.jl from the OS command line:
 
@@ -118,7 +118,7 @@ To use the app interactively:
     julia
 
     julia> using DataGen
-    julia> using Hiredis
+    julia> using HiRedis
     julia> start_session()
     julia> profiles = get_customer_profiles(10)
 
