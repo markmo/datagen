@@ -14,8 +14,8 @@ using Logging
 Logging.configure(level=WARNING)
 @docstrings
 
-function rep(var::Any, n::Int)
-    [var for i = 1:n]
+function rep{T}(var::T, n::Int)
+    T[var for i = 1:n]
 end
 
 function create_since_date(enddate::ASCIIString; startdate::ASCIIString="1970-01-01", min_days::Int=100, min_age_years::Int=5, n::Int=1)
@@ -221,7 +221,7 @@ function create_person(gender::ASCIIString, state::ASCIIString, customer_key::AS
         occupation                      = create_occupation(occupation_code),
         gender_cd                       = gender,
         birth_dt                        = create_birth_date(enddate),
-        deceased_dt                     = NA,
+        deceased_dt                     = "", #NA,
         employment_status               = create_employment_status(),
         employer_name                   = create_employer(),
         months_with_current_employer    = sample(0:200),
@@ -274,8 +274,8 @@ function create_customer(person::DataFrame, state::ASCIIString, enddate::ASCIISt
         customer_status_cd              = "01",
         customer_status_desc            = "Active",
         customer_since_date             = customer_since_date,
-        customer_left_dt                = NA,
-        customer_bankrupt_dt            = NA,
+        customer_left_dt                = "", #NA,
+        customer_bankrupt_dt            = "", #NA,
         customer_domicile_branch_cd     = NA,
         customer_domicile_branch_desc   = create_domicile_branch(state),
         relationship_manager_cd         = NA,
@@ -369,9 +369,9 @@ function create_account_holdings(customer_key::ASCIIString)
     end
     DataFrame(
         customer_sk                     = rep(int(customer_key), num_accounts),
-        account_sk                      = [int(key) for key in account_keys],
+        account_sk                      = Int[int(key) for key in account_keys],
         customer_account_role_start_dt  = rep(customer_since_date, num_accounts),
-        customer_account_role_end_dt    = rep(NA, num_accounts),
+        customer_account_role_end_dt    = rep("", num_accounts), #rep(NA, num_accounts),
         customer_account_role_cd        = customer_account_role_codes,
         customer_account_role_desc      = customer_account_role_descs,
         account_held_since_dt           = rep(account_open_date, num_accounts)
@@ -461,12 +461,12 @@ Generates the t_Account table.
 function create_account_details(customer_key::ASCIIString)
     core_customer_details = get_customer_accounts(customer_key)
     DataFrame(
-        account_sk                      = [int(key) for key in core_customer_details[:account_key]],
-        account_id                      = [int(key) for key in core_customer_details[:account_key]],
+        account_sk                      = Int[int(key) for key in core_customer_details[:account_key]],
+        account_id                      = Int[int(key) for key in core_customer_details[:account_key]],
         account_type_cd                 = core_customer_details[:account_type],
         account_type_desc               = create_account_type_descs(convert(Array, core_customer_details[:account_type])),
         account_open_dt                 = core_customer_details[:open_date],
-        account_close_dt                = NA,
+        account_close_dt                = "", #NA,
         account_status_cd               = "A",
         account_status_desc             = "Active"
         )
@@ -520,7 +520,7 @@ function create_transactions(account_key::ASCIIString, account_type_code::ASCIIS
     end
     if num_transactions > 0
         DataFrame(
-            transaction_sk                = [int(key) for key in get_new_transaction_key_range(num_transactions)],
+            transaction_sk                = Int[int(key) for key in get_new_transaction_key_range(num_transactions)],
             transaction_ts                = times,
             transaction_amount            = amounts,
             transaction_channel_type_cd   = rep(NA, num_transactions),
@@ -590,7 +590,7 @@ function create_interactions(customer_key::ASCIIString, enddate::ASCIIString, da
     debug(string("channel_type_descs size:", length(channel_type_descs)))
 
     DataFrame(
-        interaction_sk                  = [int(key) for key in get_new_interaction_key_range(total_num_interactions, customer_key)],
+        interaction_sk                  = Int[int(key) for key in get_new_interaction_key_range(total_num_interactions, customer_key)],
         interaction_start_ts            = start_times,
         interaction_end_ts              = end_times,
         interaction_channel_type_cd     = channel_type_codes,
@@ -714,10 +714,10 @@ function create_joint_accounts(customer_accounts::DataFrame)
     debug(string("account_role_descs size:", length(account_role_descs)))
 
     DataFrame(
-        customer_sk                     = [int(key) for key in customer_keys],
-        account_sk                      = [int(key) for key in account_keys],
+        customer_sk                     = Int[int(key) for key in customer_keys],
+        account_sk                      = Int[int(key) for key in account_keys],
         customer_account_role_start_dt  = account_open_dates,
-        customer_account_role_end_dt    = rep(NA, length(account_keys)),
+        customer_account_role_end_dt    = rep("", length(account_keys)), #rep(NA, length(account_keys)),
         customer_account_role_cd        = account_role_codes,
         customer_account_role_desc      = account_role_descs,
         account_held_since_dt           = account_open_dates

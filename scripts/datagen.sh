@@ -9,17 +9,18 @@ numblocks=$(cat $numblocksfile)
 
 echo "numblocks=$numblocks"
 
-catpersoncmd="cat "
-catmailaddrcmd="cat "
-catresaddrcmd="cat "
-catcustcmd="cat "
-catacctbalcmd="cat "
-cataccttranscmd="cat "
-catchanusagecmd="cat "
-catcustacctcmd="cat "
-catacctcmd="cat "
-catintercmd="cat "
-catcustintercmd="cat "
+catpersoncmd="cat $scriptdir/../data/persons_header.csv"
+catmailaddrcmd="cat $scriptdir/../data/mail_addresses_header.csv"
+catresaddrcmd="cat $scriptdir/../data/residential_addresses_header.csv"
+catcustcmd="cat $scriptdir/../data/customers_header.csv"
+catacctbalcmd="cat $scriptdir/../data/account_balances_header.csv"
+cataccttranscmd="cat $scriptdir/../data/account_transactions_header.csv"
+catchanusagecmd="cat $scriptdir/../data/channel_usage_header.csv"
+catcustacctcmd="cat $scriptdir/../data/customer_accounts_header.csv"
+catacctcmd="cat $scriptdir/../data/accounts_header.csv"
+catintercmd="cat $scriptdir/../data/interactions_header.csv"
+catcustintercmd="cat $scriptdir/../data/customer_interactions_header.csv"
+
 for i in `seq 1 $numblocks`;
 do
 	catpersoncmd="$catpersoncmd $scriptdir/../data/persons_$i.csv"
@@ -71,4 +72,4 @@ eval $catcustintercmd
 
 julia $scriptdir/../src/postprocess.jl
 
-#$scriptdir/move_data.sh
+$scriptdir/move_data.sh
