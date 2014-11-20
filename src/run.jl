@@ -3,7 +3,7 @@ require(string(srcdir, "/DataGen.jl"))
 
 using DataGen
 using DataFrames
-using Hiredis
+using HiRedis
 using KeyManager
 
 num_customers = 500

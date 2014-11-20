@@ -1,6 +1,6 @@
 module KeyManager
 
-using Hiredis
+using HiRedis
 using DataFrames
 
 function initialize_key_manager(host::ASCIIString, port::Int)

@@ -7,7 +7,7 @@ using KeyManager
 using StatsBase
 using Distributions
 using DataFrames
-using Hiredis
+using HiRedis
 using Docile
 using Logging
 

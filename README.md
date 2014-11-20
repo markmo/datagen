@@ -80,7 +80,7 @@ If you already have R installed using Homebrew, then you may need to reinstall i
     brew rm R
     brew install R
 
-Next, install hiredis. Hiredis is the C client to Redis. The Julia Redis Client wraps hiredis.
+Next, install the hiredis C client library for Redis. The Julia Redis Client wraps hiredis.
 
     brew install hiredis
 
