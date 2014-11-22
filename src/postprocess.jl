@@ -25,7 +25,7 @@ for file in files
                 print(tempfile, string("\"\",", line))
                 firstline = false
             else
-                print(tempfile, string(i-1, ",", line))
+                print(tempfile, string("\"$(i-1)\"", ",", line))
             end
         end
     end
