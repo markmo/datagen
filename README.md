@@ -114,12 +114,45 @@ Other package dependencies include:
     Pkg.add("DataFrames")
     Pkg.add("Docile")
     Pkg.add("Logging")
+    Pkg.add("ArgParse")
     Pkg.add("Compat")        # For Julia version 0.3.x backwards compatibility
     Pkg.add("Dates")         # only if using Julia version 0.3.x
 
-Exit Julia. Edit the parameters at the top of run.jl. Change to the "src" directory, then execute run.jl from the OS command line:
+Exit Julia. Execute run.jl from the OS command line at the project root:
 
-    julia run.jl
+    julia src/run.jl
+
+This script can be run with a number of command line arguments:
+
+    usage: run.jl [-n NUM-CUSTOMERS] [-b BLOCK-SIZE] [-d ENDDATE]
+                  [--balance-days BALANCE-DAYS]
+                  [--transaction_days TRANSACTION-DAYS] [-r REDIS-HOST]
+                  [-p REDIS-PORT] [-h]
+
+    optional arguments:
+      -n, --num-customers NUM-CUSTOMERS
+                            number of customers to generate (type: Int64,
+                            default: 500)
+      -b, --block-size BLOCK-SIZE
+                            block size; number of customers to process in
+                            a chunk (type: Int64, default: 500)
+      -d, --enddate ENDDATE
+                            End date (default: "2014-11-12")
+      --balance-days BALANCE-DAYS
+                            Days history to generate account balances
+                            (type: Int64, default: 30)
+      --transaction_days TRANSACTION-DAYS
+                            Days history to generate transactions (type:
+                            Int64, default: 60)
+      -r, --redis-host REDIS-HOST
+                            Redis host (default: "127.0.0.1")
+      -p, --redis-port REDIS-PORT
+                            Redis port (type: Int64, default: 6379)
+      -h, --help            show this help message and exit
+
+Use the "-h" flag to repeat these instructions:
+
+    julia src/run.jl -h
 
 The datasets above will be created in the data directory.
 

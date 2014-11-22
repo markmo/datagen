@@ -5,14 +5,53 @@ using DataGen
 using DataFrames
 using HiRedis
 using KeyManager
+using ArgParse
 
-num_customers = 500
-block_size = 500
-enddate = "2014-11-12"
-balance_days = 30
-transaction_days = 60
-redis_host = "127.0.0.1"
-redis_port = 6379
+function parse_commandline()
+    s = ArgParseSettings()
+
+    @add_arg_table s begin
+        "--num-customers", "-n"
+            help = "number of customers to generate"
+            arg_type = Int
+            default = 500
+        "--block-size", "-b"
+            help = "block size; number of customers to process in a chunk"
+            arg_type = Int
+            default = 500
+        "--enddate", "-d"
+            help = "End date"
+            arg_type = ASCIIString
+            default = "2014-11-12"
+        "--balance-days"
+            help = "Days history to generate account balances"
+            arg_type = Int
+            default = 30
+        "--transaction-days"
+            help = "Days history to generate transactions"
+            arg_type = Int
+            default = 60
+        "--redis-host", "-r"
+            help = "Redis host"
+            arg_type = ASCIIString
+            default = "127.0.0.1"
+        "--redis-port", "-p"
+            help = "Redis port"
+            arg_type = Int
+            default = 6379
+    end
+    return parse_args(s)
+end
+
+args = parse_commandline()
+
+num_customers = args["num-customers"]
+block_size = args["block-size"]
+enddate = args["enddate"]
+balance_days = args["balance-days"]
+transaction_days = args["transaction-days"]
+redis_host = args["redis-host"]
+redis_port = args["redis-port"]
 
 start_session(redis_host, redis_port)
 flushall()

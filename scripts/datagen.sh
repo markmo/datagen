@@ -1,8 +1,51 @@
 #!/usr/bin/env bash
 
+while [[ $# > 1 ]]
+do
+key="$1"
+shift
+
+case $key in
+	-p|--num-processes)
+	NUMPROCESSES="$1"
+	shift
+	;;
+	-n|--num-customers)
+	NUMCUSTOMERS="$1"
+	shift
+	;;
+	-b|--block-size)
+	BLOCKSIZE="$1"
+	shift
+	;;
+	-d|--enddate)
+	ENDDATE="$1"
+	shift
+	;;
+	--balance-days)
+	BALANCEDAYS="$1"
+	shift
+	;;
+	--transaction-days)
+	TRANSACTIONDAYS="$1"
+	shift
+	;;
+	-r|--redis-host)
+	REDISHOST="$1"
+	shift
+	;;
+	-p|--redis-port)
+	REDISPORT="$1"
+	shift
+	;;
+	*)
+	;;
+esac
+done
+
 scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-julia -p 4 $scriptdir/../src/run.jl > /var/log/datagen/datagen.log
+julia -p ${NUMPROCESSES:-4} $scriptdir/../src/run.jl --num-customers ${NUMCUSTOMERS:-500} --block-size ${BLOCKSIZE:-500} --enddate ${ENDDATE:-"2014-11-12"} --balance-days ${BALANCEDAYS:-30} --transaction-days ${TRANSACTIONDAYS:-60} --redis-host ${REDISHOST:="127.0.0.1"} --redis-port ${REDISPORT:-6379} > /var/log/datagen/datagen.log
 
 numblocksfile="$scriptdir/../numblocks"
 numblocks=$(cat $numblocksfile)
