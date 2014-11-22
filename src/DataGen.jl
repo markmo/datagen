@@ -103,17 +103,17 @@ end
 
 function create_birth_date(enddate::ASCIIString)
     age = sample([
-        sample(20:24, 96, replace=true),
-        sample(25:29, 99, replace=true),
-        sample(30:34, 102, replace=true),
-        sample(35:39, 105, replace=true),
-        sample(40:44, 109, replace=true),
-        sample(45:49, 99, replace=true),
-        sample(50:54, 94, replace=true),
-        sample(55:59, 85, replace=true),
-        sample(60:64, 79, replace=true),
-        sample(65:69, 62, replace=true),
-        sample(70:74, 70, replace=true),
+        sample(20:24, 96),
+        sample(25:29, 99),
+        sample(30:34, 102),
+        sample(35:39, 105),
+        sample(40:44, 109),
+        sample(45:49, 99),
+        sample(50:54, 94),
+        sample(55:59, 85),
+        sample(60:64, 79),
+        sample(65:69, 62),
+        sample(70:74, 70),
     ])
     ed = Date(enddate) - Dates.Year(age)
     string(ed)
@@ -397,13 +397,13 @@ end
 
 function create_num_transactions(account_type_code::ASCIIString, days::Int)
     if account_type_code in ["CC", "TXN"]
-        sample(1:5, days, replace=true)
+        sample(1:5, days)
     elseif account_type_code in ["MT", "PL"]
         sample([rep(0, days - 1), 1], days)
     elseif account_type_code == "SV"
-        sample([1, 0, 0], days, replace=true)
+        sample([1, 0, 0], days)
     elseif account_type_code == "TD"
-        sample([1, rep(0, 50)], days, replace=true)
+        sample([1, rep(0, 50)], days)
     end
 end
 
@@ -544,7 +544,7 @@ end
 
 function create_channel_type_codes(ib_yn::ASCIIString, gomoney_yn::ASCIIString, num_interactions::Int)
     if ib_yn == "Y" && gomoney_yn == "Y"
-        sample(["GM", "IB"], num_interactions, replace=true)
+        sample(["GM", "IB"], num_interactions)
     elseif ib_yn == "Y" && gomoney_yn == "N"
         rep("IB", num_interactions)
     elseif ib_yn == "N" && gomoney_yn == "Y"
@@ -557,7 +557,7 @@ function create_channel_type_descs(channel_type_codes::Array{ASCIIString,1})
 end
 
 function create_num_interactions(days::Int)
-    sample([0, 0, 1, 2], days, replace=true)
+    sample([0, 0, 1, 2], days)
 end
 
 @doc md"""
@@ -666,7 +666,7 @@ function create_joint_accounts(customer_accounts::DataFrame)
 #             append!(account_role_codes, rep("JO", n))
 #             append!(account_role_descs, rep("Joint", n))
 #         end
-        sample_account_keys = sample(account_keyset, n)
+        sample_account_keys = sample(account_keyset, n, replace=false)
         add_to_set("used_account_keys", sample_account_keys...)
 #         append!(account_keys, sample_account_keys)
         for account_key in sample_account_keys
