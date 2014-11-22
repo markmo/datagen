@@ -59,7 +59,7 @@ catcustcmd="cat $scriptdir/../data/customers_header.csv"
 catacctbalcmd="cat $scriptdir/../data/account_balances_header.csv"
 cataccttranscmd="cat $scriptdir/../data/account_transactions_header.csv"
 catchanusagecmd="cat $scriptdir/../data/channel_usage_header.csv"
-catcustacctcmd="cat $scriptdir/../data/customer_accounts_header.csv"
+# catcustacctcmd="cat $scriptdir/../data/customer_accounts_header.csv"
 catacctcmd="cat $scriptdir/../data/accounts_header.csv"
 catintercmd="cat $scriptdir/../data/interactions_header.csv"
 catcustintercmd="cat $scriptdir/../data/customer_interactions_header.csv"
@@ -73,7 +73,7 @@ do
 	catacctbalcmd="$catacctbalcmd $scriptdir/../data/account_balances_$i.csv"
 	cataccttranscmd="$cataccttranscmd $scriptdir/../data/account_transactions_$i.csv"
 	catchanusagecmd="$catchanusagecmd $scriptdir/../data/channel_usage_$i.csv"
-	catcustacctcmd="$catcustacctcmd $scriptdir/../data/customer_accounts_$i.csv"
+	# catcustacctcmd="$catcustacctcmd $scriptdir/../data/customer_accounts_$i.csv"
 	catacctcmd="$catacctcmd $scriptdir/../data/accounts_$i.csv"
 	catintercmd="$catintercmd $scriptdir/../data/interactions_$i.csv"
 	catcustintercmd="$catcustintercmd $scriptdir/../data/customer_interactions_$i.csv"
@@ -85,7 +85,7 @@ catcustcmd="$catcustcmd > $scriptdir/../data/t_Customer_20141030.csv"
 catacctbalcmd="$catacctbalcmd > $scriptdir/../data/t_Account_Balance_20141031.csv"
 cataccttranscmd="$cataccttranscmd > $scriptdir/../data/t_Account_Transaction_20141031.csv"
 catchanusagecmd="$catchanusagecmd > $scriptdir/../data/t_Channel_Usage_20141030.csv"
-catcustacctcmd="$catcustacctcmd > $scriptdir/../data/t_Customer_Account_20141031.csv"
+# catcustacctcmd="$catcustacctcmd > $scriptdir/../data/t_Customer_Account_20141031.csv"
 catacctcmd="$catacctcmd > $scriptdir/../data/t_Account_20141031.csv"
 catintercmd="$catintercmd > $scriptdir/../data/t_Interaction_20141030.csv"
 catcustintercmd="$catcustintercmd > $scriptdir/../data/t_Customer_Interaction_20141030.csv"
@@ -105,7 +105,8 @@ eval $cataccttranscmd
 echo "Writing data/t_Channel_Usage_20141030.csv"
 eval $catchanusagecmd
 echo "Writing data/t_Customer_Account_20141031.csv"
-eval $catcustacctcmd
+# eval $catcustacctcmd
+cp $scriptdir/../data/customer_accounts.csv $scriptdir/../data/t_Customer_Account_20141031.csv
 echo "Writing data/t_Account_20141031.csv"
 eval $catacctcmd
 echo "Writing data/t_Interaction_20141030.csv"

@@ -154,8 +154,8 @@ function generate(i::Int, num_customers::Int, block_size::Int, enddate::ASCIIStr
         end
     end
 
-    joint_accounts = create_joint_accounts(customer_accounts)
-    global customer_accounts = rbind(customer_accounts, joint_accounts)
+#     joint_accounts = create_joint_accounts(customer_accounts)
+#     global customer_accounts = rbind(customer_accounts, joint_accounts)
 
     if writeheaders
         open(string(srcdir, "/../data/persons_header.csv"), "w") do f; println(f, makestring(names(persons))); end;
@@ -165,7 +165,7 @@ function generate(i::Int, num_customers::Int, block_size::Int, enddate::ASCIIStr
         open(string(srcdir, "/../data/account_balances_header.csv"), "w") do f; println(f, makestring(names(account_balances))); end;
         open(string(srcdir, "/../data/account_transactions_header.csv"), "w") do f; println(f, makestring(names(account_transactions))); end;
         open(string(srcdir, "/../data/channel_usage_header.csv"), "w") do f; println(f, makestring(names(channel_usage))); end;
-        open(string(srcdir, "/../data/customer_accounts_header.csv"), "w") do f; println(f, makestring(names(customer_accounts))); end;
+#         open(string(srcdir, "/../data/customer_accounts_header.csv"), "w") do f; println(f, makestring(names(customer_accounts))); end;
         open(string(srcdir, "/../data/accounts_header.csv"), "w") do f; println(f, makestring(names(accounts))); end;
         open(string(srcdir, "/../data/interactions_header.csv"), "w") do f; println(f, makestring(names(interactions))); end;
         open(string(srcdir, "/../data/customer_interactions_header.csv"), "w") do f; println(f, makestring(names(customer_interactions))); end;
@@ -178,7 +178,7 @@ function generate(i::Int, num_customers::Int, block_size::Int, enddate::ASCIIStr
     writetable(string(srcdir, "/../data/account_balances_", i, ".csv"), account_balances; header=false)
     writetable(string(srcdir, "/../data/account_transactions_", i, ".csv"), account_transactions; header=false)
     writetable(string(srcdir, "/../data/channel_usage_", i, ".csv"), channel_usage; header=false)
-    writetable(string(srcdir, "/../data/customer_accounts_", i, ".csv"), customer_accounts; header=false)
+#     writetable(string(srcdir, "/../data/customer_accounts_", i, ".csv"), customer_accounts; header=false)
     writetable(string(srcdir, "/../data/accounts_", i, ".csv"), accounts; header=false)
     writetable(string(srcdir, "/../data/interactions_", i, ".csv"), interactions; header=false)
     writetable(string(srcdir, "/../data/customer_interactions_", i, ".csv"), customer_interactions; header=false)
@@ -189,6 +189,10 @@ for i in 1:n
     writeheaders = i == 1
     generate(i, num_cust, block_size, enddate, balance_days, transaction_days; writeheaders=writeheaders)
 end
+
+joint_accounts = create_joint_accounts(customer_accounts)
+global customer_accounts = rbind(customer_accounts, joint_accounts)
+writetable(string(srcdir, "/../data/customer_accounts.csv"), customer_accounts; header=true)
 
 open(string(srcdir, "/../numblocks"), "w") do f
     print(f, string(n))
