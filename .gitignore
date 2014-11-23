@@ -1,3 +1,4 @@
 **/*.rdb
 **/*.csv
 numblocks
+conf/conf.ini
