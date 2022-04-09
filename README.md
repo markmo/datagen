@@ -100,7 +100,7 @@ The default Redis port is 6379. See the [Redis website](http://redis.io/).
 
 Clone this app locally. Change to the src subdirectory. For example:
 
-    git clone http://<YOUR USERNAME>@stash.snbc.io/scm/col/datagen.git
+    git clone http://<YOUR USERmissingME>@stash.snbc.io/scm/col/datagen.git
     cd datagen
 
 DataGen also depends on the [HiRedis.jl](https://github.com/markmo/HiRedis.jl) package. To install this package, start Julia and run:
